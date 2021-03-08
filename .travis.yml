@@ -9,9 +9,9 @@ go:
 #   only:
 #     - master
 
-branches:
-  only:
-    - Ryan_Blog
+#branches:
+#  only:
+#    - Ryan_Blog
 
 install:
   # 安装最新的hugo
