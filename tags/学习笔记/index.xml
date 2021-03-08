@@ -3,8 +3,7 @@
         <title>学习笔记 - 标签 - Ryan Blog</title>
         <link>https://ryan-y-c.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
         <description>学习笔记 - 标签 - Ryan Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ryan_technologystack@foxmail.com (Ryan)</managingEditor>
-            <webMaster>ryan_technologystack@foxmail.com (Ryan)</webMaster><lastBuildDate>Mon, 25 Sep 2017 19:02:18 &#43;0800</lastBuildDate><atom:link href="https://ryan-y-c.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 25 Sep 2017 19:02:18 &#43;0800</lastBuildDate><atom:link href="https://ryan-y-c.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="self" type="application/rss+xml" /><item>
     <title>Java程序的部署</title>
     <link>https://ryan-y-c.github.io/java%E7%A8%8B%E5%BA%8F%E7%9A%84%E9%83%A8%E7%BD%B2/</link>
     <pubDate>Mon, 25 Sep 2017 19:02:18 &#43;0800</pubDate>
@@ -74,5 +73,40 @@
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/java%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8E%9F%E7%90%86/</guid>
     <description><![CDATA[字符串原理]]></description>
+</item><item>
+    <title>算法与数据结构</title>
+    <link>https://ryan-y-c.github.io/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
+    <pubDate>Sat, 12 Aug 2017 18:21:43 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://ryan-y-c.github.io/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid>
+    <description><![CDATA[算法与数据结构]]></description>
+</item><item>
+    <title>多线程爬虫以及ES海量数据分析</title>
+    <link>https://ryan-y-c.github.io/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%88%AC%E8%99%AB%E4%BB%A5%E5%8F%8Aes%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/</link>
+    <pubDate>Mon, 05 Jun 2017 10:35:25 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://ryan-y-c.github.io/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%88%AC%E8%99%AB%E4%BB%A5%E5%8F%8Aes%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/</guid>
+    <description><![CDATA[多线程爬虫以及ES海量数据分析]]></description>
+</item><item>
+    <title>异常</title>
+    <link>https://ryan-y-c.github.io/%E5%BC%82%E5%B8%B8/</link>
+    <pubDate>Mon, 27 Feb 2017 21:01:16 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://ryan-y-c.github.io/%E5%BC%82%E5%B8%B8/</guid>
+    <description><![CDATA[异常]]></description>
+</item><item>
+    <title>HttpClient</title>
+    <link>https://ryan-y-c.github.io/httpclint/</link>
+    <pubDate>Wed, 22 Feb 2017 17:35:30 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://ryan-y-c.github.io/httpclint/</guid>
+    <description><![CDATA[HttpClient工具的使用]]></description>
+</item><item>
+    <title>Web前后端基础架构原理</title>
+    <link>https://ryan-y-c.github.io/web%E5%89%8D%E5%90%8E%E7%AB%AF%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86/</link>
+    <pubDate>Tue, 07 Feb 2017 21:20:29 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://ryan-y-c.github.io/web%E5%89%8D%E5%90%8E%E7%AB%AF%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86/</guid>
+    <description><![CDATA[Web前后端基础架构原理]]></description>
 </item></channel>
 </rss>
