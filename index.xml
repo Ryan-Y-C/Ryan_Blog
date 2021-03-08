@@ -2,7 +2,7 @@
     <channel>
         <title>Ryan Blog</title>
         <link>https://ryan-y-c.github.io/</link>
-        <description>凡是过往,皆为序章 凡是未来,皆有可期！</description>
+        <description>Ryan Blog</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ryan_technologystack@foxmail.com (Ryan)</managingEditor>
             <webMaster>ryan_technologystack@foxmail.com (Ryan)</webMaster><lastBuildDate>Mon, 25 Sep 2017 19:02:18 &#43;0800</lastBuildDate>
             <atom:link href="https://ryan-y-c.github.io/index.xml" rel="self" type="application/rss+xml" />
