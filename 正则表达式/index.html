@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>正则表达式 - Ryan Blog</title><meta name="Description" content="凡是过往,皆为序章 凡是未来,皆有可期！"><meta property="og:title" content="正则表达式" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" /><meta property="og:image" content="http://example.org/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2017-09-18T10:32:34&#43;08:00" />
+<meta property="article:modified_time" content="2017-09-18T10:32:34&#43;08:00" /><meta property="og:site_name" content="Ryan Blog" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://example.org/logo.png"/>
+
+<meta name="twitter:title" content="正则表达式"/>
+<meta name="twitter:description" content=""/>
+<meta name="application-name" content="LoveIt">
+<meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="canonical" href="http://example.org/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" /><link rel="prev" href="http://example.org/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F/" /><link rel="next" href="http://example.org/docker%E5%8E%9F%E7%90%86/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "正则表达式",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F\/"
+        },"genre": "posts","keywords": "学习笔记","wordcount":  590 ,
+        "url": "http:\/\/example.org\/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F\/","datePublished": "2017-09-18T10:32:34+08:00","dateModified": "2017-09-18T10:32:34+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Ryan"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Ryan Blog"><span id="id-1" class="typeit"></span></a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/categories/documentation/"> 文档 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Ryan Blog"><span id="id-2" class="typeit"></span></a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/categories/documentation/" title="">文档</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">正则表达式</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Ryan</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="far fa-folder fa-fw"></i>学习笔记</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2017-09-18">2017-09-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 590 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#正则表达式的常用的元字符">正则表达式的常用的元字符</a></li>
+        <li><a href="#java中的正则表达式">Java中的正则表达式</a></li>
+        <li><a href="#分组与捕获">分组与捕获</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="正则表达式更强大的通配符">正则表达式（更强大的通配符）</h1>
+<p>用于描述文本/字符串的一组规则</p>
+<ul>
+<li>处理文本</li>
+<li>提取信息</li>
+</ul>
+<p>java转义字符</p>
+<ul>
+<li>\n  \r \t \ \uXXXX</li>
+</ul>
+<h3 id="正则表达式的常用的元字符">正则表达式的常用的元字符</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><em>符号</em></th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">^</td>
+<td style="text-align:center">开始位置</td>
+</tr>
+<tr>
+<td style="text-align:center">$</td>
+<td style="text-align:center">结束位置</td>
+</tr>
+<tr>
+<td style="text-align:center">.</td>
+<td style="text-align:center">单个任意字符（不一定包含换号符）</td>
+</tr>
+<tr>
+<td style="text-align:center">?.</td>
+<td style="text-align:center">可以匹配换行符</td>
+</tr>
+<tr>
+<td style="text-align:center">\w</td>
+<td style="text-align:center">单个“word”字符 字⺟/数字/下划线/汉字</td>
+</tr>
+<tr>
+<td style="text-align:center">\s</td>
+<td style="text-align:center">单个空⽩字符（\n\r\t）</td>
+</tr>
+<tr>
+<td style="text-align:center">\d</td>
+<td style="text-align:center">单个数字字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\b</td>
+<td style="text-align:center">单词的开始或结束</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><em>符号</em></th>
+<th style="text-align:center">重复次数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">*</td>
+<td style="text-align:center">0次或多次</td>
+</tr>
+<tr>
+<td style="text-align:center">+</td>
+<td style="text-align:center">1次或多次</td>
+</tr>
+<tr>
+<td style="text-align:center">？</td>
+<td style="text-align:center">0次或1次</td>
+</tr>
+<tr>
+<td style="text-align:center">{n}</td>
+<td style="text-align:center">n次</td>
+</tr>
+<tr>
+<td style="text-align:center">{n,}</td>
+<td style="text-align:center">&gt;=n次</td>
+</tr>
+<tr>
+<td style="text-align:center">{n,m}</td>
+<td style="text-align:center">n到m次</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">符号</th>
+<th style="text-align:center">选择</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">[aeiou]</td>
+<td style="text-align:center">单个的a/e/i/o/u字符之⼀</td>
+</tr>
+<tr>
+<td style="text-align:center">[0-9]</td>
+<td style="text-align:center">单个数字字符</td>
+</tr>
+<tr>
+<td style="text-align:center">[A-Z]</td>
+<td style="text-align:center">单个⼤写字⺟</td>
+</tr>
+<tr>
+<td style="text-align:center">[A-Z0-9]</td>
+<td style="text-align:center">⼤写字⺟或者数字或者下划线</td>
+</tr>
+<tr>
+<td style="text-align:center">Hi |hi等价于[Hh]i</td>
+<td style="text-align:center">Hi或者hi</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">符号</th>
+<th style="text-align:center">反义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">[^aeiou]</td>
+<td style="text-align:center">单个的除a/e/i/o/u之外的字符</td>
+</tr>
+<tr>
+<td style="text-align:center">[^A]</td>
+<td style="text-align:center">单个⾮x字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\W</td>
+<td style="text-align:center">单个⾮\w（字⺟/数字/下划线/汉字）</td>
+</tr>
+<tr>
+<td style="text-align:center">\S</td>
+<td style="text-align:center">单个⾮\s（空⽩）</td>
+</tr>
+<tr>
+<td style="text-align:center">\D</td>
+<td style="text-align:center">单个⾮\d（数字）字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\B</td>
+<td style="text-align:center">⾮开头/结束位置</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><em>符号</em></th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">^\d{5,12}$</td>
+<td style="text-align:center">5到12位的数字</td>
+</tr>
+<tr>
+<td style="text-align:center">^(0|[1-9][0-9]*)$</td>
+<td style="text-align:center">0或者⾮零开头的数字</td>
+</tr>
+<tr>
+<td style="text-align:center">^(-?\d+)(.\d+)?$</td>
+<td style="text-align:center">⼩数</td>
+</tr>
+<tr>
+<td style="text-align:center">\n\s*\r</td>
+<td style="text-align:center">空⽩⾏</td>
+</tr>
+</tbody>
+</table>
+<h3 id="java中的正则表达式">Java中的正则表达式</h3>
+<p>String</p>
+<ul>
+<li>split() 正则表达式分割字符</li>
+<li>replaceAll/replaceFirst 替换字符</li>
+<li>matches 判断某个值是否匹配</li>
+</ul>
+<p>matches</p>
+<ul>
+<li>尽量少用或者少编译，因为效率低</li>
+<li>Java中的正则表达式是比较消耗资源的
+<ul>
+<li>正则表达式需要解析Pattern中的compile负责解析正则表达式</li>
+<li>匹配过程非常昂贵 匹配过程具有回溯过程</li>
+</ul>
+</li>
+</ul>
+<h3 id="分组与捕获">分组与捕获</h3>
+<p>想要将所有符合正则表达式的⽂本抓出来处理</p>
+<ul>
+<li>使⽤括号来指定⼀个被捕获的分组</li>
+<li>分组的编号从1开始</li>
+<li>分组的编号计算只看左括号</li>
+<li>(?:)不捕获和分配编号，括号只⽤于分组或标记优先级</li>
+</ul>
+<p>[实战] <a href="https://github.com/hcsp/regular-expression-in-action/pull/73">https://github.com/hcsp/regular-expression-in-action/pull/73</a></p></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2017-09-18</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F/" class="prev" rel="prev" title="Spring生态系统"><i class="fas fa-angle-left fa-fw"></i>Spring生态系统</a>
+            <a href="/docker%E5%8E%9F%E7%90%86/" class="next" rel="next" title="Docker原理">Docker原理<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.stemmer.support.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.zh.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/twemoji/twemoji.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/typeit/typeit.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{},"data":{"id-1":"Ryan","id-2":"Ryan"},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","lunrLanguageCode":"zh","lunrSegmentitURL":"/lib/lunr/lunr.segmentit.js","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"lunr"},"twemoji":true,"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

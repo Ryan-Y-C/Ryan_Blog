@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Spring生态系统 - Ryan Blog</title><meta name="Description" content="凡是过往,皆为序章 凡是未来,皆有可期！"><meta property="og:title" content="Spring生态系统" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F/" /><meta property="og:image" content="http://example.org/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2017-09-11T21:08:14&#43;08:00" />
+<meta property="article:modified_time" content="2017-09-11T21:08:14&#43;08:00" /><meta property="og:site_name" content="Ryan Blog" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://example.org/logo.png"/>
+
+<meta name="twitter:title" content="Spring生态系统"/>
+<meta name="twitter:description" content=""/>
+<meta name="application-name" content="LoveIt">
+<meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="canonical" href="http://example.org/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F/" /><link rel="prev" href="http://example.org/springweb/" /><link rel="next" href="http://example.org/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Spring生态系统",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F\/"
+        },"genre": "posts","keywords": "学习笔记","wordcount":  1630 ,
+        "url": "http:\/\/example.org\/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F\/","datePublished": "2017-09-11T21:08:14+08:00","dateModified": "2017-09-11T21:08:14+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Ryan"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Ryan Blog"><span id="id-1" class="typeit"></span></a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/categories/documentation/"> 文档 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Ryan Blog"><span id="id-2" class="typeit"></span></a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/categories/documentation/" title="">文档</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Spring生态系统</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Ryan</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="far fa-folder fa-fw"></i>学习笔记</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2017-09-11">2017-09-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1630 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#bean配置与spring-mybatis实战">Bean配置与Spring MyBatis实战</a>
+      <ul>
+        <li><a href="#在resourcesstatic-中的html页面可以在浏览器中获取">在resources/static 中的html页面可以在浏览器中获取</a></li>
+        <li><a href="#模板引擎freemarker">模板引擎freemarker</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#动态代理与aop">动态代理与AOP</a>
+      <ul>
+        <li><a href="#aopaspect-oriented-programming-面向切面编程">AOP(Aspect-Oriented-Programming) 面向切面编程</a></li>
+        <li><a href="#aop使用场景">AOP使用场景</a></li>
+        <li><a href="#aop的两种实现方式jdk动态代理与字节码生成">AOP的两种实现方式：JDK动态代理与字节码生成</a></li>
+        <li><a href="#springboot中使用aop">SpringBoot中使用AOP</a>
+          <ul>
+            <li><a href="#aop与spring">AOP与Spring</a></li>
+          </ul>
+        </li>
+        <li><a href="#redis">Redis</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="spring生态系统">Spring生态系统</h1>
+<h2 id="bean配置与spring-mybatis实战">Bean配置与Spring MyBatis实战</h2>
+<p>0、在Spring容器中引入Bean</p>
+<p>1、 Spring+MyBatis（H2/MySQL/Postgres）</p>
+<p>2、模板引擎（后端渲染HTML）</p>
+<p>3、前后端分离和后端渲染</p>
+<p>Controller 做HTTP相关业务</p>
+<p>Service 做业务代码</p>
+<p>Dao 做数据库相关业务</p>
+<h3 id="在resourcesstatic-中的html页面可以在浏览器中获取">在resources/static 中的html页面可以在浏览器中获取</h3>
+<h3 id="模板引擎freemarker">模板引擎freemarker</h3>
+<p>[freemarker Springboot starter]http://zetcode.com/springboot/freemarker/
+[freemarker API]https://freemarker.apache.org/docs/ref_directive_list.html
+[SpringWeb]https://github.com/Ryan-Y-C/SpringDemo</p>
+<h1 id="动态代理aop与spring">动态代理、AOP与Spring</h1>
+<h2 id="动态代理与aop">动态代理与AOP</h2>
+<h3 id="aopaspect-oriented-programming-面向切面编程">AOP(Aspect-Oriented-Programming) 面向切面编程</h3>
+<ul>
+<li>相对于OOP（面向对象编程）</li>
+<li>AOP是面向切面编程，关注一个统一的切面</li>
+<li>AOP和Spring不是同一个东西</li>
+</ul>
+<h3 id="aop使用场景">AOP使用场景</h3>
+<p>需要统一处理的场景</p>
+<ul>
+<li>日志</li>
+<li>缓存</li>
+<li>鉴权
+OOP使用装饰器模式实现</li>
+<li>装饰器模式 Decorator pattern</li>
+<li>动态的为一个对象增加功能，但是不能改变其中结构</li>
+<li>本质是一个“包装”</li>
+</ul>
+<p>装饰器模式一般会声明一个接口，新功能继承这个接口在新的类中添加新功能</p>
+<h3 id="aop的两种实现方式jdk动态代理与字节码生成">AOP的两种实现方式：JDK动态代理与字节码生成</h3>
+<p>1、JDK动态代理</p>
+<ul>
+<li>
+<p>优点：方便，不需要依赖任何第三方库</p>
+</li>
+<li>
+<p>去点：只适用于接口</p>
+</li>
+</ul>
+<p>必须实现JDK的InvocationHandler接口，必须实现invoke方法，该方法为拦截方法。当调用代理类时候就会调用该方法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// 创建代理对象，并获取代理的对象实体的类加载器-&gt;拦截代理的接口-&gt;处理该对象的代理类
+//拦截已有方法的实现，实现AOP
+DataService ds= (DataService)Proxy.newProxyInstance(service.getClass().getClassLoader，new Class[]{DataService.Class },new LogProxy())
+</code></pre></td></tr></table>
+</div>
+</div><p>2、CGLIB/ByteBuddy字节码生成</p>
+<ul>
+<li>
+<p>优点：强大，不受接口限制</p>
+</li>
+<li>
+<p>缺点：需要引用额外的第三方类库</p>
+</li>
+<li>
+<p>不能增强final类和方法和private方法</p>
+</li>
+</ul>
+<p>引入CGLIB库</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="c">&lt;!-- https://mvnrepository.com/artifact/cglib/cglib --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>cglib<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cglib<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.2.2<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>实现CGLIBD的MethodInterceptor接口，实现该拦截方法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">DataServiceImpl service = new DataServiceImpl();
+Enhancer enhancer =new Enhancer();
+//设置实体方法DataServiceImpl为需要代理的实体类
+enhancer.setSuperclass(DataServiceImpl.class)
+//设置触发拦截时需要调用的类（需要执行拦截方法的类）
+enhancer.setCallBack(new LogInterceptpor(sservice)) 
+//新创建的类 类似于实体类的子类
+DataServiceImpl enhancedService = (DataServiceImpl) enhancer.create();
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="springboot中使用aop">SpringBoot中使用AOP</h3>
+<h4 id="aop与spring">AOP与Spring</h4>
+<p>在Spring中使用AOP实现Redis缓存</p>
+<p>@Aspect声明切面</p>
+<ul>
+<li>@Before
+<ul>
+<li>在方法执行前处理</li>
+</ul>
+</li>
+<li>After
+<ul>
+<li>在方法结束后进行处理</li>
+</ul>
+</li>
+<li>Around
+[SpringAOP]https://developer.ibm.com/zh/technologies/spring/articles/j-spring-boot-aop-web-log-processing-and-distributed-locking/
+[Spring官方文档]https://docs.spring.io/spring/docs/4.3.15.RELEASE/spring-framework-reference/html/aop.html
+[中文Blog]http://blog.didispace.com/springbootaoplog/
+引入SpringBootAOP依赖</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+     <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+     <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-aop<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>配置CGLIB切换CGLIB动态代理</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">spring.aop.proxy-target-class=true
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">//传达要拦截的方法即含有Cache注解的方法
+@Around(&#34;@annotation(SpringWeb.anno.Cache)&#34;)
+
+//获取被拦截的方法
+MethodSignature signature=(MethodSignature)joinPoint.getSignature();
+
+//joinPoint.proceed()执行被拦截的方法
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="redis">Redis</h3>
+<p>广泛使用的内存缓存</p>
+<p>常见的数据结构
+String/List/Set/ ZSet
+Redis</p>
+<ul>
+<li>完全基于内存</li>
+<li>优秀的数据结构设计</li>
+<li>单一线程，避免上下文切换</li>
+<li>事件驱动，非阻塞</li>
+<li>因为redis基于内存 所以多个JVM可以基于内存共享资源</li>
+</ul>
+<p>使用docker安装redis</p>
+<p>[官方文档]https://hub.docker.com/_/redis</p>
+<p>[docker关联redis]https://marcus116.blogspot.com/2019/02/how-to-run-redis-in-docker.html</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">docker pull redis
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -p 6379:6379 -d redis
+</code></pre></td></tr></table>
+</div>
+</div><p>配置Spring redis端口</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">spring.redis.host=localhost
+spring.redis.port=6379
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-data-redis<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>将java对象传递给redis,java对象（User等）实现Serializable接口实现可序列化</p>
+<p>创建docker mysql</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"> docker run --name mysql -e MYSQL_ROOT_PASSWORD=123456 -e MYSQL_DATABASE=mall -p 3306:3306 -d mysql:8.0.18 --lower_case_table_names=1
+</code></pre></td></tr></table>
+</div>
+</div><p>[Spring AOP Redis Mysql实战]https://github.com/hcsp/spring-aop-redis-mysql/pull/60</p></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2017-09-11</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/springweb/" class="prev" rel="prev" title="SpringWeb"><i class="fas fa-angle-left fa-fw"></i>SpringWeb</a>
+            <a href="/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" class="next" rel="next" title="正则表达式">正则表达式<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.stemmer.support.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.zh.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/twemoji/twemoji.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/typeit/typeit.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{},"data":{"id-1":"Ryan","id-2":"Ryan"},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","lunrLanguageCode":"zh","lunrSegmentitURL":"/lib/lunr/lunr.segmentit.js","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"lunr"},"twemoji":true,"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

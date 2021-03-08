@@ -1,0 +1,82 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Ryan Blog</title>
+        <link>http://example.org/</link>
+        <description>凡是过往,皆为序章 凡是未来,皆有可期！</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ryan_technologystack@foxmail.com (Ryan)</managingEditor>
+            <webMaster>ryan_technologystack@foxmail.com (Ryan)</webMaster><lastBuildDate>Mon, 25 Sep 2017 19:02:18 &#43;0800</lastBuildDate>
+            <atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+        <item>
+    <title>Java程序的部署</title>
+    <link>http://example.org/java%E7%A8%8B%E5%BA%8F%E7%9A%84%E9%83%A8%E7%BD%B2/</link>
+    <pubDate>Mon, 25 Sep 2017 19:02:18 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/java%E7%A8%8B%E5%BA%8F%E7%9A%84%E9%83%A8%E7%BD%B2/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>Docker原理</title>
+    <link>http://example.org/docker%E5%8E%9F%E7%90%86/</link>
+    <pubDate>Fri, 22 Sep 2017 15:53:26 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/docker%E5%8E%9F%E7%90%86/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>正则表达式</title>
+    <link>http://example.org/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</link>
+    <pubDate>Mon, 18 Sep 2017 10:32:34 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>Spring生态系统</title>
+    <link>http://example.org/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F/</link>
+    <pubDate>Mon, 11 Sep 2017 21:08:14 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>SpringWeb</title>
+    <link>http://example.org/springweb/</link>
+    <pubDate>Mon, 11 Sep 2017 11:32:42 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/springweb/</guid>
+    <description><![CDATA[SpringWeb]]></description>
+</item><item>
+    <title>Spring</title>
+    <link>http://example.org/spring/</link>
+    <pubDate>Sat, 09 Sep 2017 21:55:35 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/spring/</guid>
+    <description><![CDATA[Spring]]></description>
+</item><item>
+    <title>MyBatis</title>
+    <link>http://example.org/mybatis/</link>
+    <pubDate>Sat, 02 Sep 2017 18:18:25 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/mybatis/</guid>
+    <description><![CDATA[MyBatis]]></description>
+</item><item>
+    <title>注解</title>
+    <link>http://example.org/%E6%B3%A8%E8%A7%A3/</link>
+    <pubDate>Thu, 31 Aug 2017 18:39:32 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/%E6%B3%A8%E8%A7%A3/</guid>
+    <description><![CDATA[注解]]></description>
+</item><item>
+    <title>Markdown 基本语法预览</title>
+    <link>http://example.org/basic-markdown-preview/</link>
+    <pubDate>Fri, 25 Aug 2017 16:22:42 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/basic-markdown-preview/</guid>
+    <description><![CDATA[<p>这是一篇用于预览 <i class="fab fa-markdown"></i>&nbsp;Markdown 基本语法的文章。</p>
+<p>文章内容基于 <a href="https://github.github.com/gfm" target="_blank" rel="noopener noreffer">GitHub Flavo红色 Markdown Spec</a>。</p>
+<p>不包含复杂的规则说明，仅仅展示 GFM 所约定的 Markdown 基本语法。</p>]]></description>
+</item><item>
+    <title>类型与反射</title>
+    <link>http://example.org/%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%8F%8D%E5%B0%84/</link>
+    <pubDate>Sun, 20 Aug 2017 21:28:52 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%8F%8D%E5%B0%84/</guid>
+    <description><![CDATA[类型与反射]]></description>
+</item></channel>
+</rss>

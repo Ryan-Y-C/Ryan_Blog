@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>算法与数据结构 - Ryan Blog</title><meta name="Description" content="算法与数据结构"><meta property="og:title" content="算法与数据结构" />
+<meta property="og:description" content="算法与数据结构" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" /><meta property="og:image" content="http://example.org/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2017-08-12T18:21:43&#43;08:00" />
+<meta property="article:modified_time" content="2017-08-12T18:21:43&#43;08:00" /><meta property="og:site_name" content="Ryan Blog" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://example.org/logo.png"/>
+
+<meta name="twitter:title" content="算法与数据结构"/>
+<meta name="twitter:description" content="算法与数据结构"/>
+<meta name="application-name" content="LoveIt">
+<meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="canonical" href="http://example.org/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" /><link rel="prev" href="http://example.org/java8%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" /><link rel="next" href="http://example.org/java%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8E%9F%E7%90%86/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "算法与数据结构",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84\/"
+        },"genre": "posts","keywords": "学习笔记","wordcount":  744 ,
+        "url": "http:\/\/example.org\/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84\/","datePublished": "2017-08-12T18:21:43+08:00","dateModified": "2017-08-12T18:21:43+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Ryan"
+            },"description": "算法与数据结构"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Ryan Blog"><span id="id-1" class="typeit"></span></a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/categories/documentation/"> 文档 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Ryan Blog"><span id="id-2" class="typeit"></span></a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/categories/documentation/" title="">文档</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">算法与数据结构</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Ryan</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="far fa-folder fa-fw"></i>学习笔记</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2017-08-12">2017-08-12</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 744 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#算法的复杂度">算法的复杂度</a></li>
+    <li><a href="#基本数据结构---数组">基本数据结构 - 数组</a></li>
+    <li><a href="#基本数据结构---链表">基本数据结构 - 链表</a></li>
+    <li><a href="#基本数据结构---栈stack">基本数据结构 - 栈（stack）</a></li>
+    <li><a href="#基本数据结构---队列queue">基本数据结构 - 队列（queue）</a></li>
+    <li><a href="#基本数据结构---哈希表">基本数据结构 - 哈希表</a></li>
+    <li><a href="#hashmap">HashMap</a>
+      <ul>
+        <li><a href="#哈希表简介">哈希表简介</a></li>
+        <li><a href="#java-7-hashmap">Java 7 HashMap</a></li>
+        <li><a href="#java8-hashmap的改进">Java8 HashMap的改进</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="算法与数据结构">算法与数据结构</h1>
+<h2 id="算法的复杂度">算法的复杂度</h2>
+<p>时间的复杂度</p>
+<ul>
+<li>O(1)-哈希桶/数组随机寻址（常数）</li>
+<li>O(n) - 遍历（线性）</li>
+<li>0(log(n))- 二分查找，二叉树（对数）</li>
+<li>O(n*log(n)) - 基于比较的排序算法的下界</li>
+<li>O(n^2) - 冒泡排序</li>
+</ul>
+<p>时间的复杂度的计算是忽略常数的</p>
+<ul>
+<li>即O(n)=O(2n)</li>
+</ul>
+<p>时间的复杂度的计算中，高阶复杂度会吞并低阶复杂度</p>
+<ul>
+<li>O(n^2)+O(n)=O(n^2)</li>
+</ul>
+<h2 id="基本数据结构---数组">基本数据结构 - 数组</h2>
+<p>随机寻址</p>
+<ul>
+<li>常数时间</li>
+</ul>
+<p>插入/删除</p>
+<ul>
+<li>线性时间</li>
+</ul>
+<p>查找</p>
+<ul>
+<li>无序：线性时间</li>
+<li>有序：对数时间（二分查找）</li>
+</ul>
+<h2 id="基本数据结构---链表">基本数据结构 - 链表</h2>
+<p>寻址</p>
+<ul>
+<li>线性时间</li>
+</ul>
+<p>插入</p>
+<ul>
+<li>常数时间</li>
+</ul>
+<p>查找</p>
+<ul>
+<li>线性时间</li>
+</ul>
+<p>手写</p>
+<ul>
+<li>翻转链表</li>
+<li>判断链表是否成环</li>
+</ul>
+<h2 id="基本数据结构---栈stack">基本数据结构 - 栈（stack）</h2>
+<p>FILO（first in last out）</p>
+<p>应用：方法栈</p>
+<h2 id="基本数据结构---队列queue">基本数据结构 - 队列（queue）</h2>
+<p>FIFO（first in first out）
+应用：线程池</p>
+<h2 id="基本数据结构---哈希表">基本数据结构 - 哈希表</h2>
+<p>查找/插入/删除都是O（1）</p>
+<p>哈希算法与碰撞</p>
+<p>哈希桶的内部实现</p>
+<h2 id="hashmap">HashMap</h2>
+<p>HashMap默认容量</p>
+<p>HashMap如何扩容</p>
+<ul>
+<li>占用容量为 当前容量*0.75时进行扩容</li>
+<li>transfer
+HashMap的数组大小为什么一定是2的幂</li>
+<li>hash&amp;（length-1）按位与</li>
+<li>只有数组的大小是2的n次方-1 二进制才能为1111进行按位与快速得到数组下标并且是均匀的
+HashMap为什么是线程不安全的</li>
+</ul>
+<p>Java7到8有哪儿些改进？为什么</p>
+<h3 id="哈希表简介">哈希表简介</h3>
+<p>核心是基于哈希值的桶和链表</p>
+<p>O（1）的平均查找、插入、删除时间</p>
+<p>缺陷是哈希值的碰撞（collision）</p>
+<h3 id="java-7-hashmap">Java 7 HashMap</h3>
+<p>经典的哈希表实现：数组+链表</p>
+<p>重点知识</p>
+<ul>
+<li>初始容量</li>
+<li>负载因子</li>
+<li>哈希算法</li>
+<li>扩容
+<ul>
+<li>低效</li>
+<li>线程不安全
+Java7 的HashMap的问题</li>
+</ul>
+</li>
+<li>容易碰到死锁</li>
+<li>潜在安全隐患
+<ul>
+<li>CVE-2011-4858,TomCat邮件组的讨论</li>
+<li>通过精心构造的恶意请求引发Dos（拒绝服务攻击）</li>
+<li>链表性能退化</li>
+</ul>
+</li>
+</ul>
+<h3 id="java8-hashmap的改进">Java8 HashMap的改进</h3>
+<p>数组+链表/红黑树</p>
+<p>使用红黑树的阈值为8符合泊松分布</p>
+<p>扩容时插入顺序的改进</p>
+<p>函数方法</p>
+<ul>
+<li>forEach</li>
+<li>compute系列</li>
+</ul>
+<p>Map的新API</p>
+<ul>
+<li>merge</li>
+<li>replace</li>
+</ul></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2017-08-12</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/java8%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" class="prev" rel="prev" title="Java8函数式编程"><i class="fas fa-angle-left fa-fw"></i>Java8函数式编程</a>
+            <a href="/java%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8E%9F%E7%90%86/" class="next" rel="next" title="字符串原理">字符串原理<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.stemmer.support.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.zh.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/twemoji/twemoji.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/typeit/typeit.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{},"data":{"id-1":"Ryan","id-2":"Ryan"},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","lunrLanguageCode":"zh","lunrSegmentitURL":"/lib/lunr/lunr.segmentit.js","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"lunr"},"twemoji":true,"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>SpringWeb - Ryan Blog</title><meta name="Description" content="SpringWeb"><meta property="og:title" content="SpringWeb" />
+<meta property="og:description" content="SpringWeb" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/springweb/" /><meta property="og:image" content="http://example.org/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2017-09-11T11:32:42&#43;08:00" />
+<meta property="article:modified_time" content="2017-09-11T11:32:42&#43;08:00" /><meta property="og:site_name" content="Ryan Blog" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://example.org/logo.png"/>
+
+<meta name="twitter:title" content="SpringWeb"/>
+<meta name="twitter:description" content="SpringWeb"/>
+<meta name="application-name" content="LoveIt">
+<meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="canonical" href="http://example.org/springweb/" /><link rel="prev" href="http://example.org/spring/" /><link rel="next" href="http://example.org/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "SpringWeb",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/springweb\/"
+        },"genre": "posts","keywords": "学习笔记","wordcount":  650 ,
+        "url": "http:\/\/example.org\/springweb\/","datePublished": "2017-09-11T11:32:42+08:00","dateModified": "2017-09-11T11:32:42+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Ryan"
+            },"description": "SpringWeb"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Ryan Blog"><span id="id-1" class="typeit"></span></a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/categories/documentation/"> 文档 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Ryan Blog"><span id="id-2" class="typeit"></span></a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/categories/documentation/" title="">文档</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">SpringWeb</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Ryan</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="far fa-folder fa-fw"></i>学习笔记</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2017-09-11">2017-09-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 650 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#web应用的本质">Web应用的本质</a>
+      <ul>
+        <li><a href="#http-get请求">HTTP GET请求</a></li>
+        <li><a href="#restful-api设计api的约定">RESTful API（设计API的约定）</a></li>
+        <li><a href="#restcontroller">@RestController</a></li>
+        <li><a href="#postmapping">PostMapping</a></li>
+        <li><a href="#json转class文件工具">json转class文件工具</a></li>
+        <li><a href="#生成http请求">生成HTTP请求</a></li>
+        <li><a href="#servlet-转换器">servlet-转换器</a></li>
+        <li><a href="#周边生态系统">周边生态系统</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="spring-web应用">Spring Web应用</h1>
+<p>##从零开始一个Spring应用</p>
+<p>pom.xml</p>
+<ul>
+<li>[创建pom.xml]https://spring.io/guides/gs/spring-boot/</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+<span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">&#34;http://maven.apache.org/POM/4.0.0&#34;</span> <span class="na">xmlns:xsi=</span><span class="s">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
+	<span class="na">xsi:schemaLocation=</span><span class="s">&#34;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&#34;</span><span class="nt">&gt;</span>
+	<span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+	<span class="nt">&lt;parent&gt;</span>
+		<span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+		<span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-parent<span class="nt">&lt;/artifactId&gt;</span>
+		<span class="nt">&lt;version&gt;</span>2.3.2.RELEASE<span class="nt">&lt;/version&gt;</span>
+		<span class="nt">&lt;relativePath/&gt;</span> <span class="c">&lt;!-- lookup parent from repository --&gt;</span>
+	<span class="nt">&lt;/parent&gt;</span>
+	<span class="nt">&lt;groupId&gt;</span>com.example<span class="nt">&lt;/groupId&gt;</span>
+	<span class="nt">&lt;artifactId&gt;</span>spring-boot<span class="nt">&lt;/artifactId&gt;</span>
+	<span class="nt">&lt;version&gt;</span>0.0.1-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+	<span class="nt">&lt;name&gt;</span>spring-boot<span class="nt">&lt;/name&gt;</span>
+	<span class="nt">&lt;description&gt;</span>Demo project for Spring Boot<span class="nt">&lt;/description&gt;</span>
+
+	<span class="nt">&lt;properties&gt;</span>
+		<span class="nt">&lt;java.version&gt;</span>1.8<span class="nt">&lt;/java.version&gt;</span>
+	<span class="nt">&lt;/properties&gt;</span>
+
+	<span class="nt">&lt;dependencies&gt;</span>
+		<span class="nt">&lt;dependency&gt;</span>
+			<span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+			<span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="nt">&lt;/artifactId&gt;</span>
+		<span class="nt">&lt;/dependency&gt;</span>
+
+		<span class="nt">&lt;dependency&gt;</span>
+			<span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+			<span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-test<span class="nt">&lt;/artifactId&gt;</span>
+			<span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+			<span class="nt">&lt;exclusions&gt;</span>
+				<span class="nt">&lt;exclusion&gt;</span>
+					<span class="nt">&lt;groupId&gt;</span>org.junit.vintage<span class="nt">&lt;/groupId&gt;</span>
+					<span class="nt">&lt;artifactId&gt;</span>junit-vintage-engine<span class="nt">&lt;/artifactId&gt;</span>
+				<span class="nt">&lt;/exclusion&gt;</span>
+			<span class="nt">&lt;/exclusions&gt;</span>
+		<span class="nt">&lt;/dependency&gt;</span>
+	<span class="nt">&lt;/dependencies&gt;</span>
+
+	<span class="nt">&lt;build&gt;</span>
+		<span class="nt">&lt;plugins&gt;</span>
+			<span class="nt">&lt;plugin&gt;</span>
+				<span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+				<span class="nt">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+			<span class="nt">&lt;/plugin&gt;</span>
+		<span class="nt">&lt;/plugins&gt;</span>
+	<span class="nt">&lt;/build&gt;</span>
+
+<span class="nt">&lt;/project&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>src/main/java/hello/Application.java</p>
+<p>src/main/java/hello/HelloController.java</p>
+<h2 id="web应用的本质">Web应用的本质</h2>
+<p>处理HTTP请求</p>
+<ul>
+<li>从HTTP请求中提取query string(查询字符串)</li>
+<li>从HTTP请求中提取payload（负载）body中的参数
+返回HTTP响应</li>
+<li>status code</li>
+<li>HTTP response header</li>
+<li>HTTP response body
+<ul>
+<li>JSON</li>
+<li>HTML</li>
+</ul>
+</li>
+</ul>
+<h3 id="http-get请求">HTTP GET请求</h3>
+<p>Query String</p>
+<ul>
+<li>?param1=value1&amp;param2=value2</li>
+</ul>
+<p>通常用来传递非敏感信息</p>
+<p>使用@RequsetParam进行接受</p>
+<h3 id="restful-api设计api的约定">RESTful API（设计API的约定）</h3>
+<p>使用HTTP动词来代表动作</p>
+<ul>
+<li>GET：获取资源</li>
+<li>POST:新建资源</li>
+<li>PUT：更新资源</li>
+<li>DELETE：删除资源</li>
+</ul>
+<p>使用URL（名词）来代表资源</p>
+<ul>
+<li>资源里没有动词</li>
+<li>使用复数来代表资源列表</li>
+</ul>
+<h3 id="restcontroller">@RestController</h3>
+<p>使用RESTful风格的参数</p>
+<ul>
+<li>使用@PathVariable进行参数提取</li>
+</ul>
+<h3 id="postmapping">PostMapping</h3>
+<p>处理POST请求
+从HTTP POST请求提取body</p>
+<h3 id="json转class文件工具">json转class文件工具</h3>
+<p>idea工具：GsonFormat</p>
+<h3 id="生成http请求">生成HTTP请求</h3>
+<p>直接生成HttpServletResponse对象</p>
+<ul>
+<li>原始、简单
+直接返回HTML字符串</li>
+</ul>
+<p>返回对象，并自动格式化成JSON</p>
+<ul>
+<li>
+<p>常用</p>
+</li>
+<li>
+<p>@ResponseBody</p>
+</li>
+</ul>
+<p>模板引擎渲染</p>
+<ul>
+<li>JSP/Velocity/Freemarker</li>
+</ul>
+<h3 id="servlet-转换器">servlet-转换器</h3>
+<p>将字节流转换成java对象</p>
+<p>将java对象转换成字节流</p>
+<h3 id="周边生态系统">周边生态系统</h3>
+<p>HTTPS</p>
+<p>分布式部署</p>
+<p>扩展功能</p>
+<ul>
+<li>数据库</li>
+<li>Redis缓存</li>
+<li>信息队列</li>
+<li>RPC(Dubbo/Spring Cloud)</li>
+<li>微服务化</li>
+</ul></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2017-09-11</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/springweb/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/spring/" class="prev" rel="prev" title="Spring"><i class="fas fa-angle-left fa-fw"></i>Spring</a>
+            <a href="/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F/" class="next" rel="next" title="Spring生态系统">Spring生态系统<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.stemmer.support.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.zh.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/twemoji/twemoji.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/typeit/typeit.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{},"data":{"id-1":"Ryan","id-2":"Ryan"},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","lunrLanguageCode":"zh","lunrSegmentitURL":"/lib/lunr/lunr.segmentit.js","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"lunr"},"twemoji":true,"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

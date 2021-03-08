@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>包管理 - Ryan Blog</title><meta name="Description" content="Maven or Java的包管理"><meta property="og:title" content="包管理" />
+<meta property="og:description" content="Maven or Java的包管理" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/blog/" /><meta property="og:image" content="http://example.org/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2016-01-20T19:14:16&#43;08:00" />
+<meta property="article:modified_time" content="2017-01-20T19:14:16&#43;08:00" /><meta property="og:site_name" content="Ryan Blog" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://example.org/logo.png"/>
+
+<meta name="twitter:title" content="包管理"/>
+<meta name="twitter:description" content="Maven or Java的包管理"/>
+<meta name="application-name" content="LoveIt">
+<meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="canonical" href="http://example.org/blog/" /><link rel="next" href="http://example.org/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%B5%85%E8%B0%88/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "包管理",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/blog\/"
+        },"genre": "posts","keywords": "学习笔记","wordcount":  755 ,
+        "url": "http:\/\/example.org\/blog\/","datePublished": "2016-01-20T19:14:16+08:00","dateModified": "2017-01-20T19:14:16+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Ryan"
+            },"description": "Maven or Java的包管理"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Ryan Blog"><span id="id-1" class="typeit"></span></a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/categories/documentation/"> 文档 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Ryan Blog"><span id="id-2" class="typeit"></span></a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/categories/documentation/" title="">文档</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">包管理</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Ryan</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="far fa-folder fa-fw"></i>学习笔记</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2016-01-20">2016-01-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 755 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-包">1 包</a></li>
+    <li><a href="#2-包管理">2 包管理</a></li>
+    <li><a href="#3-包冲突及解决">3 包冲突及解决</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="1-包">1 包</h2>
+<p>一个包是一个命名空间，它组织一组相关的类和接口。</p>
+<p>包是存放类及相关文件的文件夹。</p>
+<p>classPath：存放类的文件路径或者类的压缩包路径。</p>
+<h2 id="2-包管理">2 包管理</h2>
+<p>包管理作用：帮助JVM找到所需的第三方类库。</p>
+<p>包管理演化：</p>
+<ul>
+<li>
+<p>最初通过命令行加载类文件</p>
+</li>
+<li>
+<p>Apache Ant ：使用xml进行包管理。</p>
+<ul>
+<li>
+<p>需手动下载相关类库</p>
+</li>
+<li>
+<p>XML配置指定源代码目录、依赖的jar包、输出目录等。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>Maven包管理：</p>
+<ul>
+<li>
+<p>Maven最核心的核心理念 -&gt; 约定优于配置</p>
+</li>
+<li>
+<p>按照一定约定为所有的包编号</p>
+</li>
+<li>
+<p>通过传递性依赖下载相应的包</p>
+</li>
+<li>
+<p>Maven的中央仓库 -&gt; 按照一定约定存储包</p>
+</li>
+<li>
+<p>Maven的本地仓库</p>
+<ul>
+<li>默认位于~/.m2 =&gt;存放第三方包</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown"><span class="p">&lt;</span><span class="nt">project</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">modelVersion</span><span class="p">&gt;</span>4.0.0<span class="p">&lt;/</span><span class="nt">modelVersion</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">groupId</span><span class="p">&gt;</span>com.test<span class="p">&lt;/</span><span class="nt">groupId</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">artifactId</span><span class="p">&gt;</span>my-project<span class="p">&lt;/</span><span class="nt">artifactId</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">version</span><span class="p">&gt;</span>1.0<span class="p">&lt;/</span><span class="nt">version</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">project</span><span class="p">&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><a href="https://semver.org/lang/zh-CN/" target="_blank" rel="noopener noreffer">语义化版本 X.Y.Z</a></p>
+<p>版本格式：主版本号.次版本号.修订号</p>
+<ul>
+<li>X：主版本号，当我们做了不兼容或者颠覆性的更新，修改此版本号。</li>
+<li>Y：此版本号，当我们做了向下兼容的功能性修改，修改此版本号。</li>
+<li>Z：修订号，当我们做了向下兼容的问题修正，修改此版本号。</li>
+</ul>
+<p>SNAPSHOT快照版本</p>
+<ul>
+<li>开发中使用</li>
+<li>可以频繁修改版本号</li>
+</ul>
+<h2 id="3-包冲突及解决">3 包冲突及解决</h2>
+<p>传递性依赖的自动管理</p>
+<ul>
+<li>原则:绝对不允许最终的classpath出现同名不同版本的jar包</li>
+<li>当出现不同同名不同版本jar包时最近胜出</li>
+</ul>
+<p>Maven 解决原则：</p>
+<ul>
+<li>
+<p>最近的胜出</p>
+</li>
+<li>
+<p>如何查看依赖关系</p>
+<ul>
+<li>通过idea的Maven按钮查看依赖关系。</li>
+<li>通过命令查看依赖关系</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">mvn dependency:tree    
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>解决方法</p>
+<ul>
+<li>
+<p>直接引入想要的版本</p>
+</li>
+<li>
+<p>通过标签排除不想要的版本</p>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;exclusions&gt;
+    &lt;exclusion&gt;
+        &lt;groupId&gt;&lt;/groupId&gt;
+        &lt;artifactId&gt;&lt;/artifactId&gt;
+    &lt;/exclusion&gt;
+&lt;/exclusions&gt;
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>通过idea插件 Maven Helper插件</li>
+</ul>
+</li>
+</ul>
+<p>scope   标签</p>
+<ul>
+<li>
+<p>scope 是用来限制 dependency 的作用范围的，影响 maven 项目在各个生命周期时导入的 package 的状态，主要管理依赖的部署。</p>
+</li>
+<li>
+<p>scope 标签作用</p>
+<ul>
+<li>test   Maven依赖只在测试环境有效</li>
+<li>compile   适用于所有阶段</li>
+<li>provided   编译和测试时有效，但是该依赖在运行时由服务器提供，并且打包时也不会被包含进去。</li>
+<li>provided   编译和测试时有效，但是该依赖在运行时由服务器提供，并且打包时也不会被包含进去。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"> &lt;scope&gt;&lt;/scope&gt;
+</code></pre></td></tr></table>
+</div>
+</div></li>
+</ul></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2017-01-20</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/blog/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+            <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%B5%85%E8%B0%88/" class="next" rel="next" title="数据库浅谈">数据库浅谈<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.stemmer.support.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.zh.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/twemoji/twemoji.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/typeit/typeit.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{},"data":{"id-1":"Ryan","id-2":"Ryan"},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","lunrLanguageCode":"zh","lunrSegmentitURL":"/lib/lunr/lunr.segmentit.js","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"lunr"},"twemoji":true,"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"],"id-2":["id-2"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
