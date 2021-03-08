@@ -1,15 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>预览 - 分类 - Ryan Blog</title>
-        <link>http://example.org/categories/%E9%A2%84%E8%A7%88/</link>
+        <link>https://ryan-y-c.github.io/categories/%E9%A2%84%E8%A7%88/</link>
         <description>预览 - 分类 - Ryan Blog</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ryan_technologystack@foxmail.com (Ryan)</managingEditor>
-            <webMaster>ryan_technologystack@foxmail.com (Ryan)</webMaster><lastBuildDate>Fri, 25 Aug 2017 16:22:42 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/%E9%A2%84%E8%A7%88/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>ryan_technologystack@foxmail.com (Ryan)</webMaster><lastBuildDate>Fri, 25 Aug 2017 16:22:42 &#43;0800</lastBuildDate><atom:link href="https://ryan-y-c.github.io/categories/%E9%A2%84%E8%A7%88/" rel="self" type="application/rss+xml" /><item>
     <title>Markdown 基本语法预览</title>
-    <link>http://example.org/basic-markdown-preview/</link>
+    <link>https://ryan-y-c.github.io/basic-markdown-preview/</link>
     <pubDate>Fri, 25 Aug 2017 16:22:42 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://example.org/basic-markdown-preview/</guid>
+    <guid>https://ryan-y-c.github.io/basic-markdown-preview/</guid>
     <description><![CDATA[<p>这是一篇用于预览 <i class="fab fa-markdown"></i>&nbsp;Markdown 基本语法的文章。</p>
 <p>文章内容基于 <a href="https://github.github.com/gfm" target="_blank" rel="noopener noreffer">GitHub Flavo红色 Markdown Spec</a>。</p>
 <p>不包含复杂的规则说明，仅仅展示 GFM 所约定的 Markdown 基本语法。</p>]]></description>
