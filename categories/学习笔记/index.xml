@@ -9,104 +9,3242 @@
     <pubDate>Mon, 25 Sep 2017 19:02:18 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/java%E7%A8%8B%E5%BA%8F%E7%9A%84%E9%83%A8%E7%BD%B2/</guid>
-    <description><![CDATA[]]></description>
+    <description><![CDATA[<h1 id="java程序的部署">Java程序的部署</h1>
+<p>分布式</p>
+<ul>
+<li>1、负载均衡</li>
+<li>2、容灾（单点故障）</li>
+<li>数据一致性
+<ul>
+<li>多台设备使用统一个数据库-单一数据源</li>
+</ul>
+</li>
+<li>HTTP是无状态的</li>
+</ul>
+<h3 id="部署">部署</h3>
+<p>监听端口</p>
+<p>响应HTTP请求</p>
+<p>进行预定义的业务逻辑处理</p>
+<p>部署的版本需要不停的进行更新（分布式更新）</p>
+<h3 id="分布和部署要解决的问题">分布和部署要解决的问题</h3>
+<p>环境问题</p>
+<ul>
+<li>开发环境（测试环境）</li>
+<li>预发布环境（预生产环境）</li>
+<li>生产环境（正式环境）</li>
+</ul>
+<p>环境兼容问题</p>
+<ul>
+<li>硬件/软件</li>
+<li>数据库等</li>
+</ul>
+<h3 id="发布和部署java程序">发布和部署Java程序</h3>
+<p>要解决的问题</p>
+<ul>
+<li>编写的代码</li>
+<li>所依赖的第三方库</li>
+<li>你所依赖的特殊环境配置（数据库/缓存等）</li>
+<li>稳定性</li>
+<li>升级和回滚</li>
+</ul>
+<h2 id="1使用maven-exec-plugin">1：使用Maven exec plugin</h2>
+<p>[exec官方文档] <a href="https://www.mojohaus.org/exec-maven-plugin/">https://www.mojohaus.org/exec-maven-plugin/</a>
+导入maven依赖</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;plugin&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.codehaus.mojo<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>exec-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.0.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;configuration&gt;</span>
+        <span class="nt">&lt;executable&gt;</span>java<span class="nt">&lt;/executable&gt;</span>
+        <span class="nt">&lt;arguments&gt;</span>
+            <span class="nt">&lt;argument&gt;</span>-classpath<span class="nt">&lt;/argument&gt;</span>
+                        <span class="c">&lt;!-- automatically creates the classpath using all project dependencies,
+</span><span class="c">                             also adding the project build directory --&gt;</span>
+            <span class="nt">&lt;classpath/&gt;</span>
+            <span class="nt">&lt;argument&gt;</span>com.example.Main<span class="nt">&lt;/argument&gt;</span>
+        <span class="nt">&lt;/arguments&gt;</span>
+    <span class="nt">&lt;/configuration&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>运行时加-x参数可以查看详细日志</p>
+<p>自动将所有的传递性依赖加入</p>
+<p>优点：简单</p>
+<p>缺点：不适用于自动化的场景</p>
+<h2 id="2jar包">2：jar包</h2>
+<p>运行mvn命令创造jar包</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">mvn package
+</code></pre></td></tr></table>
+</div>
+</div><p>使用 java -jar [jar包名字] 启动程序</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">java -classpath com.github.Main
+</code></pre></td></tr></table>
+</div>
+</div><p>解决jar包文件不完整问题
+[相关blog] <a href="https://www.cnblogs.com/thinking-better/p/7827368.html">https://www.cnblogs.com/thinking-better/p/7827368.html</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;plugin&gt;</span>
+                <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+                <span class="nt">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+                <span class="nt">&lt;version&gt;</span>1.5.3.RELEASE<span class="nt">&lt;/version&gt;</span>
+                <span class="nt">&lt;configuration&gt;</span>
+                    <span class="nt">&lt;mainClass&gt;</span>com.github.hcsp.Application<span class="nt">&lt;/mainClass&gt;</span>
+                <span class="nt">&lt;/configuration&gt;</span>
+                <span class="nt">&lt;executions&gt;</span>
+                    <span class="nt">&lt;execution&gt;</span>
+                        <span class="nt">&lt;goals&gt;</span>
+                            <span class="nt">&lt;goal&gt;</span>repackage<span class="nt">&lt;/goal&gt;</span>
+                        <span class="nt">&lt;/goals&gt;</span>
+                    <span class="nt">&lt;/execution&gt;</span>
+                <span class="nt">&lt;/executions&gt;</span>
+            <span class="nt">&lt;/plugin&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>设置程序端口</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">java -jar -Dserver.port=8081 target\spring-aop-redis-mysql-0.0.1.jar
+</code></pre></td></tr></table>
+</div>
+</div><p>jar包</p>
+<ul>
+<li>编译后的代码打包
+可以直接运行的jar包</li>
+<li>jar包与Manifest</li>
+</ul>
+<p>优点：简单可靠</p>
+<p>缺点：依赖于JVM环境</p>
+<h2 id="docker">Docker</h2>
+<p>创建Dockerfile</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">FROM java:openjdk-8u111-alpine
+
+RUN mkdir /app
+
+WORKDIR /app
+
+COPY target/spring-aop-redis-mysql-0.0.1.jar /app
+
+EXPOSE 8080
+
+CMD [&#34;java&#34;,&#34;-jar&#34;,&#34;spring-aop-redis-mysql-0.0.1.jar&#34;]
+</code></pre></td></tr></table>
+</div>
+</div><p>运行 //docker build .//创建镜像</p>
+<p>创建application.properties配置文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"># 请勿改变数据库名、端口、用户名及密码
+spring.datasource.url=jdbc:mysql://localhost:3306/mall?characterEncoding=utf-8
+spring.datasource.username=root
+spring.datasource.password=123456
+# 请勿改变Redis端口号
+spring.redis.host=localhost
+spring.redis.port=6379
+
+spring.aop.proxy-target-class=true
+mybatis.config-location=classpath:db/mybatis/config.xml
+
+</code></pre></td></tr></table>
+</div>
+</div><p>运行容器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ docker run -p 8082:8080 -v J:/lean/spring-aop-redis-mysql/application.properties:/app/config/application.properties a7dad994b5b2
+</code></pre></td></tr></table>
+</div>
+</div><p>Docker运行Java程序</p>
+<p>Docker运行数据库</p>
+<p>Docker运行Redis</p>
+<p>Docker运行</p>
+<h3 id="nginx">Nginx</h3>
+<p>创建nginx容器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ docker run --restart=always -v J:/lean/spring-aop-redis-mysql/deploy/nginx.conf:/etc/nginx/nginx.conf:ro -p 80:80 -d nginx
+</code></pre></td></tr></table>
+</div>
+</div><p>[nginx官网] <a href="http://nginx.org/en/docs/http/load_balancing.html">http://nginx.org/en/docs/http/load_balancing.html</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">http {
+    upstream myapp1 {
+        server srv1.example.com;
+        server srv2.example.com;
+        server srv3.example.com;
+    }
+
+    server {
+        listen 80;
+
+        location / {
+            proxy_pass http://myapp1;
+        }
+    }
+}
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="查看咱用80端口的进程">查看咱用80端口的进程</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">netstat -aon | findstr &#34;80&#34;
+</code></pre></td></tr></table>
+</div>
+</div><p>查看对应进程的程序</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">tasklist | findstr &#34;4&#34;
+</code></pre></td></tr></table>
+</div>
+</div><p>删除对应进程</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">taskkill /pid 4 /F
+</code></pre></td></tr></table>
+</div>
+</div><p>查看占用80端口的服务</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">netsh http show servicestate
+</code></pre></td></tr></table>
+</div>
+</div>]]></description>
 </item><item>
     <title>Docker原理</title>
     <link>https://ryan-y-c.github.io/docker%E5%8E%9F%E7%90%86/</link>
     <pubDate>Fri, 22 Sep 2017 15:53:26 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/docker%E5%8E%9F%E7%90%86/</guid>
-    <description><![CDATA[]]></description>
+    <description><![CDATA[<h1 id="持续集成实战docker原理">持续集成实战：Docker原理</h1>
+<ul>
+<li>保证开发、测试、交付、部署的环境完全一致</li>
+<li>保证资源的隔离</li>
+<li>启动临时的、用完即弃的环境，例如测试</li>
+<li>迅速超大规模部署和扩容</li>
+</ul>
+<h2 id="docker的基本概念">Docker的基本概念</h2>
+<p>镜像（image）</p>
+<ul>
+<li>一个预先定义好的模板文件，Docker引擎可以按照这个模板文件启动无数个一摸一样的，互不干扰
+容器（container）</li>
+<li>一台虚拟的计算机，拥有独立的：
+<ul>
+<li>网络</li>
+<li>文件系统</li>
+<li>进程</li>
+</ul>
+</li>
+<li>默认和宿主机不发生任何交互
+<ul>
+<li>意味着数据是没有持久化的</li>
+</ul>
+</li>
+</ul>
+<p>it参数会启动docker交互式命令行模式，会显示报错信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -it mysql
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="docker-pullimages">docker pull/images</h2>
+<p>下载一个指定的镜像，方便随时启动</p>
+<p>docker pull mysql:5.7.28下载指定镜像</p>
+<ul>
+<li>如果不加tag（版本号）默认是latest（最新版本）</li>
+<li>registry.cn-beijing.aliyuncs.com/dr1/hcsp:0.0.16</li>
+<li>如果不加镜像仓管地址，默认在docker中央仓库获取镜像</li>
+</ul>
+<p>docker images 查看本地已有的镜像</p>
+<h2 id="docker-runps">docker run/ps</h2>
+<p>docker run 装载镜像成为一个容器、</p>
+<ul>
+<li>通过镜像模板创建出来一个镜像实例</li>
+<li>在这个容器看来，自己就是一台独立的计算机</li>
+<li>每个容器有一个ID。支持缩写</li>
+</ul>
+<p>docker run it &lt;镜像名&gt; &lt;镜像中要运行的命令和参数&gt;</p>
+<ul>
+<li>交互式命令行，当前shell中运行，Ctrl-C 退出</li>
+<li>启动并进入容器</li>
+</ul>
+<p>docker run -d &lt;镜像名&gt; &lt;镜像中要运行的命令和参数&gt;</p>
+<ul>
+<li>daemon模式，在后台运行</li>
+</ul>
+<h2 id="docker-run">docker run</h2>
+<p>&ndash;name 为容器指定一个名字</p>
+<p>&ndash;restart=always 遇到错误自动重启</p>
+<p>提供统一化软件化交互必不可少的功能</p>
+<p>-v &lt;本地容器&gt;:&lt;容器文件&gt;
+-p &lt;本地端口&gt;:&lt;容器端口&gt;
+-e name=value
+- 向容器传递初始化参数，例如设置root密码</p>
+<p>镜像名之前是docker参数，镜像名之后是镜像参数</p>
+<h2 id="docker-startstop">docker start/stop</h2>
+<p>启动/停止一个容器</p>
+<h2 id="docker-rm">docker rm</h2>
+<p>删除一个容器</p>
+<h1 id="docker-execexecute执行">docker exec（execute执行）</h1>
+<p>指定目标容器，进入容器执行命令</p>
+<ul>
+<li>docker run -it &lt;目标容器ID/名字&gt;&lt;目标命令（通常为bash）&gt;</li>
+<li>可以想象成ssh
+调试、解决问题必备命令</li>
+</ul>
+<h2 id="docker-logs">docker logs</h2>
+<p>docker logs &lt;容器ID或容器名&gt;</p>
+<ul>
+<li>查看目标容器的输出
+docker logs -f &lt;容器ID或容器名&gt;</li>
+<li>查看目标容器最后几行的输出</li>
+</ul>
+<h2 id="docker-inspect">docker inspect</h2>
+<p>查看容器的详细状态</p>
+<h2 id="docker分层镜像">docker分层镜像</h2>
+<p>ubuntu等镜像的基础镜像相同，在不同版本可以在新层增加功能。</p>
+<h3 id="dockerfile">Dockerfile</h3>
+<p>指定镜像如何生成</p>
+<p>编写第一个Dockerfile</p>
+<p>docker build .</p>
+<ul>
+<li>执行当前目录的Dockerfile文件</li>
+</ul>
+<p>每个镜像会有一个唯一的ID</p>
+<h3 id="docker的镜像仓库与tag">Docker的镜像仓库与tag</h3>
+<p>可以任意对镜像进行tag操作</p>
+<ul>
+<li>决定了未来这个镜像会被push到哪里</li>
+<li>决定了未来从哪里下载镜像
+可以方便的藏剑镜像仓库的私服</li>
+<li>&ndash; registry-mirror</li>
+<li>&ndash;insecure-registry
+<ul>
+<li>指定成http方式</li>
+</ul>
+</li>
+</ul>
+<h2 id="docker与kubernetes容器编排引擎">docker与kubernetes(容器编排引擎)</h2>
+<p>自动化容器编排引擎</p>
+<p>[练习run命令]https://github.com/hcsp/practise-docker-run</p>]]></description>
 </item><item>
     <title>正则表达式</title>
     <link>https://ryan-y-c.github.io/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</link>
     <pubDate>Mon, 18 Sep 2017 10:32:34 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</guid>
-    <description><![CDATA[]]></description>
+    <description><![CDATA[<h1 id="正则表达式更强大的通配符">正则表达式（更强大的通配符）</h1>
+<p>用于描述文本/字符串的一组规则</p>
+<ul>
+<li>处理文本</li>
+<li>提取信息</li>
+</ul>
+<p>java转义字符</p>
+<ul>
+<li>\n  \r \t \ \uXXXX</li>
+</ul>
+<h3 id="正则表达式的常用的元字符">正则表达式的常用的元字符</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><em>符号</em></th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">^</td>
+<td style="text-align:center">开始位置</td>
+</tr>
+<tr>
+<td style="text-align:center">$</td>
+<td style="text-align:center">结束位置</td>
+</tr>
+<tr>
+<td style="text-align:center">.</td>
+<td style="text-align:center">单个任意字符（不一定包含换号符）</td>
+</tr>
+<tr>
+<td style="text-align:center">?.</td>
+<td style="text-align:center">可以匹配换行符</td>
+</tr>
+<tr>
+<td style="text-align:center">\w</td>
+<td style="text-align:center">单个“word”字符 字⺟/数字/下划线/汉字</td>
+</tr>
+<tr>
+<td style="text-align:center">\s</td>
+<td style="text-align:center">单个空⽩字符（\n\r\t）</td>
+</tr>
+<tr>
+<td style="text-align:center">\d</td>
+<td style="text-align:center">单个数字字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\b</td>
+<td style="text-align:center">单词的开始或结束</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><em>符号</em></th>
+<th style="text-align:center">重复次数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">*</td>
+<td style="text-align:center">0次或多次</td>
+</tr>
+<tr>
+<td style="text-align:center">+</td>
+<td style="text-align:center">1次或多次</td>
+</tr>
+<tr>
+<td style="text-align:center">？</td>
+<td style="text-align:center">0次或1次</td>
+</tr>
+<tr>
+<td style="text-align:center">{n}</td>
+<td style="text-align:center">n次</td>
+</tr>
+<tr>
+<td style="text-align:center">{n,}</td>
+<td style="text-align:center">&gt;=n次</td>
+</tr>
+<tr>
+<td style="text-align:center">{n,m}</td>
+<td style="text-align:center">n到m次</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">符号</th>
+<th style="text-align:center">选择</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">[aeiou]</td>
+<td style="text-align:center">单个的a/e/i/o/u字符之⼀</td>
+</tr>
+<tr>
+<td style="text-align:center">[0-9]</td>
+<td style="text-align:center">单个数字字符</td>
+</tr>
+<tr>
+<td style="text-align:center">[A-Z]</td>
+<td style="text-align:center">单个⼤写字⺟</td>
+</tr>
+<tr>
+<td style="text-align:center">[A-Z0-9]</td>
+<td style="text-align:center">⼤写字⺟或者数字或者下划线</td>
+</tr>
+<tr>
+<td style="text-align:center">Hi |hi等价于[Hh]i</td>
+<td style="text-align:center">Hi或者hi</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">符号</th>
+<th style="text-align:center">反义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">[^aeiou]</td>
+<td style="text-align:center">单个的除a/e/i/o/u之外的字符</td>
+</tr>
+<tr>
+<td style="text-align:center">[^A]</td>
+<td style="text-align:center">单个⾮x字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\W</td>
+<td style="text-align:center">单个⾮\w（字⺟/数字/下划线/汉字）</td>
+</tr>
+<tr>
+<td style="text-align:center">\S</td>
+<td style="text-align:center">单个⾮\s（空⽩）</td>
+</tr>
+<tr>
+<td style="text-align:center">\D</td>
+<td style="text-align:center">单个⾮\d（数字）字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\B</td>
+<td style="text-align:center">⾮开头/结束位置</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><em>符号</em></th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">^\d{5,12}$</td>
+<td style="text-align:center">5到12位的数字</td>
+</tr>
+<tr>
+<td style="text-align:center">^(0|[1-9][0-9]*)$</td>
+<td style="text-align:center">0或者⾮零开头的数字</td>
+</tr>
+<tr>
+<td style="text-align:center">^(-?\d+)(.\d+)?$</td>
+<td style="text-align:center">⼩数</td>
+</tr>
+<tr>
+<td style="text-align:center">\n\s*\r</td>
+<td style="text-align:center">空⽩⾏</td>
+</tr>
+</tbody>
+</table>
+<h3 id="java中的正则表达式">Java中的正则表达式</h3>
+<p>String</p>
+<ul>
+<li>split() 正则表达式分割字符</li>
+<li>replaceAll/replaceFirst 替换字符</li>
+<li>matches 判断某个值是否匹配</li>
+</ul>
+<p>matches</p>
+<ul>
+<li>尽量少用或者少编译，因为效率低</li>
+<li>Java中的正则表达式是比较消耗资源的
+<ul>
+<li>正则表达式需要解析Pattern中的compile负责解析正则表达式</li>
+<li>匹配过程非常昂贵 匹配过程具有回溯过程</li>
+</ul>
+</li>
+</ul>
+<h3 id="分组与捕获">分组与捕获</h3>
+<p>想要将所有符合正则表达式的⽂本抓出来处理</p>
+<ul>
+<li>使⽤括号来指定⼀个被捕获的分组</li>
+<li>分组的编号从1开始</li>
+<li>分组的编号计算只看左括号</li>
+<li>(?:)不捕获和分配编号，括号只⽤于分组或标记优先级</li>
+</ul>
+<p>[实战] <a href="https://github.com/hcsp/regular-expression-in-action/pull/73">https://github.com/hcsp/regular-expression-in-action/pull/73</a></p>]]></description>
 </item><item>
     <title>Spring生态系统</title>
     <link>https://ryan-y-c.github.io/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F/</link>
     <pubDate>Mon, 11 Sep 2017 21:08:14 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F/</guid>
-    <description><![CDATA[]]></description>
+    <description><![CDATA[<h1 id="spring生态系统">Spring生态系统</h1>
+<h2 id="bean配置与spring-mybatis实战">Bean配置与Spring MyBatis实战</h2>
+<p>0、在Spring容器中引入Bean</p>
+<p>1、 Spring+MyBatis（H2/MySQL/Postgres）</p>
+<p>2、模板引擎（后端渲染HTML）</p>
+<p>3、前后端分离和后端渲染</p>
+<p>Controller 做HTTP相关业务</p>
+<p>Service 做业务代码</p>
+<p>Dao 做数据库相关业务</p>
+<h3 id="在resourcesstatic-中的html页面可以在浏览器中获取">在resources/static 中的html页面可以在浏览器中获取</h3>
+<h3 id="模板引擎freemarker">模板引擎freemarker</h3>
+<p>[freemarker Springboot starter]http://zetcode.com/springboot/freemarker/
+[freemarker API]https://freemarker.apache.org/docs/ref_directive_list.html
+[SpringWeb]https://github.com/Ryan-Y-C/SpringDemo</p>
+<h1 id="动态代理aop与spring">动态代理、AOP与Spring</h1>
+<h2 id="动态代理与aop">动态代理与AOP</h2>
+<h3 id="aopaspect-oriented-programming-面向切面编程">AOP(Aspect-Oriented-Programming) 面向切面编程</h3>
+<ul>
+<li>相对于OOP（面向对象编程）</li>
+<li>AOP是面向切面编程，关注一个统一的切面</li>
+<li>AOP和Spring不是同一个东西</li>
+</ul>
+<h3 id="aop使用场景">AOP使用场景</h3>
+<p>需要统一处理的场景</p>
+<ul>
+<li>日志</li>
+<li>缓存</li>
+<li>鉴权
+OOP使用装饰器模式实现</li>
+<li>装饰器模式 Decorator pattern</li>
+<li>动态的为一个对象增加功能，但是不能改变其中结构</li>
+<li>本质是一个“包装”</li>
+</ul>
+<p>装饰器模式一般会声明一个接口，新功能继承这个接口在新的类中添加新功能</p>
+<h3 id="aop的两种实现方式jdk动态代理与字节码生成">AOP的两种实现方式：JDK动态代理与字节码生成</h3>
+<p>1、JDK动态代理</p>
+<ul>
+<li>
+<p>优点：方便，不需要依赖任何第三方库</p>
+</li>
+<li>
+<p>去点：只适用于接口</p>
+</li>
+</ul>
+<p>必须实现JDK的InvocationHandler接口，必须实现invoke方法，该方法为拦截方法。当调用代理类时候就会调用该方法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// 创建代理对象，并获取代理的对象实体的类加载器-&gt;拦截代理的接口-&gt;处理该对象的代理类
+//拦截已有方法的实现，实现AOP
+DataService ds= (DataService)Proxy.newProxyInstance(service.getClass().getClassLoader，new Class[]{DataService.Class },new LogProxy())
+</code></pre></td></tr></table>
+</div>
+</div><p>2、CGLIB/ByteBuddy字节码生成</p>
+<ul>
+<li>
+<p>优点：强大，不受接口限制</p>
+</li>
+<li>
+<p>缺点：需要引用额外的第三方类库</p>
+</li>
+<li>
+<p>不能增强final类和方法和private方法</p>
+</li>
+</ul>
+<p>引入CGLIB库</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="c">&lt;!-- https://mvnrepository.com/artifact/cglib/cglib --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>cglib<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cglib<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.2.2<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>实现CGLIBD的MethodInterceptor接口，实现该拦截方法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">DataServiceImpl service = new DataServiceImpl();
+Enhancer enhancer =new Enhancer();
+//设置实体方法DataServiceImpl为需要代理的实体类
+enhancer.setSuperclass(DataServiceImpl.class)
+//设置触发拦截时需要调用的类（需要执行拦截方法的类）
+enhancer.setCallBack(new LogInterceptpor(sservice)) 
+//新创建的类 类似于实体类的子类
+DataServiceImpl enhancedService = (DataServiceImpl) enhancer.create();
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="springboot中使用aop">SpringBoot中使用AOP</h3>
+<h4 id="aop与spring">AOP与Spring</h4>
+<p>在Spring中使用AOP实现Redis缓存</p>
+<p>@Aspect声明切面</p>
+<ul>
+<li>@Before
+<ul>
+<li>在方法执行前处理</li>
+</ul>
+</li>
+<li>After
+<ul>
+<li>在方法结束后进行处理</li>
+</ul>
+</li>
+<li>Around
+[SpringAOP]https://developer.ibm.com/zh/technologies/spring/articles/j-spring-boot-aop-web-log-processing-and-distributed-locking/
+[Spring官方文档]https://docs.spring.io/spring/docs/4.3.15.RELEASE/spring-framework-reference/html/aop.html
+[中文Blog]http://blog.didispace.com/springbootaoplog/
+引入SpringBootAOP依赖</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+     <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+     <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-aop<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>配置CGLIB切换CGLIB动态代理</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">spring.aop.proxy-target-class=true
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">//传达要拦截的方法即含有Cache注解的方法
+@Around(&#34;@annotation(SpringWeb.anno.Cache)&#34;)
+
+//获取被拦截的方法
+MethodSignature signature=(MethodSignature)joinPoint.getSignature();
+
+//joinPoint.proceed()执行被拦截的方法
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="redis">Redis</h3>
+<p>广泛使用的内存缓存</p>
+<p>常见的数据结构
+String/List/Set/ ZSet
+Redis</p>
+<ul>
+<li>完全基于内存</li>
+<li>优秀的数据结构设计</li>
+<li>单一线程，避免上下文切换</li>
+<li>事件驱动，非阻塞</li>
+<li>因为redis基于内存 所以多个JVM可以基于内存共享资源</li>
+</ul>
+<p>使用docker安装redis</p>
+<p>[官方文档]https://hub.docker.com/_/redis</p>
+<p>[docker关联redis]https://marcus116.blogspot.com/2019/02/how-to-run-redis-in-docker.html</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">docker pull redis
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -p 6379:6379 -d redis
+</code></pre></td></tr></table>
+</div>
+</div><p>配置Spring redis端口</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">spring.redis.host=localhost
+spring.redis.port=6379
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-data-redis<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>将java对象传递给redis,java对象（User等）实现Serializable接口实现可序列化</p>
+<p>创建docker mysql</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"> docker run --name mysql -e MYSQL_ROOT_PASSWORD=123456 -e MYSQL_DATABASE=mall -p 3306:3306 -d mysql:8.0.18 --lower_case_table_names=1
+</code></pre></td></tr></table>
+</div>
+</div><p>[Spring AOP Redis Mysql实战]https://github.com/hcsp/spring-aop-redis-mysql/pull/60</p>]]></description>
 </item><item>
     <title>SpringWeb</title>
     <link>https://ryan-y-c.github.io/springweb/</link>
     <pubDate>Mon, 11 Sep 2017 11:32:42 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/springweb/</guid>
-    <description><![CDATA[SpringWeb]]></description>
+    <description><![CDATA[<h1 id="spring-web应用">Spring Web应用</h1>
+<p>##从零开始一个Spring应用</p>
+<p>pom.xml</p>
+<ul>
+<li>[创建pom.xml]https://spring.io/guides/gs/spring-boot/</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+<span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">&#34;http://maven.apache.org/POM/4.0.0&#34;</span> <span class="na">xmlns:xsi=</span><span class="s">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
+	<span class="na">xsi:schemaLocation=</span><span class="s">&#34;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&#34;</span><span class="nt">&gt;</span>
+	<span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+	<span class="nt">&lt;parent&gt;</span>
+		<span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+		<span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-parent<span class="nt">&lt;/artifactId&gt;</span>
+		<span class="nt">&lt;version&gt;</span>2.3.2.RELEASE<span class="nt">&lt;/version&gt;</span>
+		<span class="nt">&lt;relativePath/&gt;</span> <span class="c">&lt;!-- lookup parent from repository --&gt;</span>
+	<span class="nt">&lt;/parent&gt;</span>
+	<span class="nt">&lt;groupId&gt;</span>com.example<span class="nt">&lt;/groupId&gt;</span>
+	<span class="nt">&lt;artifactId&gt;</span>spring-boot<span class="nt">&lt;/artifactId&gt;</span>
+	<span class="nt">&lt;version&gt;</span>0.0.1-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+	<span class="nt">&lt;name&gt;</span>spring-boot<span class="nt">&lt;/name&gt;</span>
+	<span class="nt">&lt;description&gt;</span>Demo project for Spring Boot<span class="nt">&lt;/description&gt;</span>
+
+	<span class="nt">&lt;properties&gt;</span>
+		<span class="nt">&lt;java.version&gt;</span>1.8<span class="nt">&lt;/java.version&gt;</span>
+	<span class="nt">&lt;/properties&gt;</span>
+
+	<span class="nt">&lt;dependencies&gt;</span>
+		<span class="nt">&lt;dependency&gt;</span>
+			<span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+			<span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="nt">&lt;/artifactId&gt;</span>
+		<span class="nt">&lt;/dependency&gt;</span>
+
+		<span class="nt">&lt;dependency&gt;</span>
+			<span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+			<span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-test<span class="nt">&lt;/artifactId&gt;</span>
+			<span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+			<span class="nt">&lt;exclusions&gt;</span>
+				<span class="nt">&lt;exclusion&gt;</span>
+					<span class="nt">&lt;groupId&gt;</span>org.junit.vintage<span class="nt">&lt;/groupId&gt;</span>
+					<span class="nt">&lt;artifactId&gt;</span>junit-vintage-engine<span class="nt">&lt;/artifactId&gt;</span>
+				<span class="nt">&lt;/exclusion&gt;</span>
+			<span class="nt">&lt;/exclusions&gt;</span>
+		<span class="nt">&lt;/dependency&gt;</span>
+	<span class="nt">&lt;/dependencies&gt;</span>
+
+	<span class="nt">&lt;build&gt;</span>
+		<span class="nt">&lt;plugins&gt;</span>
+			<span class="nt">&lt;plugin&gt;</span>
+				<span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+				<span class="nt">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+			<span class="nt">&lt;/plugin&gt;</span>
+		<span class="nt">&lt;/plugins&gt;</span>
+	<span class="nt">&lt;/build&gt;</span>
+
+<span class="nt">&lt;/project&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>src/main/java/hello/Application.java</p>
+<p>src/main/java/hello/HelloController.java</p>
+<h2 id="web应用的本质">Web应用的本质</h2>
+<p>处理HTTP请求</p>
+<ul>
+<li>从HTTP请求中提取query string(查询字符串)</li>
+<li>从HTTP请求中提取payload（负载）body中的参数
+返回HTTP响应</li>
+<li>status code</li>
+<li>HTTP response header</li>
+<li>HTTP response body
+<ul>
+<li>JSON</li>
+<li>HTML</li>
+</ul>
+</li>
+</ul>
+<h3 id="http-get请求">HTTP GET请求</h3>
+<p>Query String</p>
+<ul>
+<li>?param1=value1&amp;param2=value2</li>
+</ul>
+<p>通常用来传递非敏感信息</p>
+<p>使用@RequsetParam进行接受</p>
+<h3 id="restful-api设计api的约定">RESTful API（设计API的约定）</h3>
+<p>使用HTTP动词来代表动作</p>
+<ul>
+<li>GET：获取资源</li>
+<li>POST:新建资源</li>
+<li>PUT：更新资源</li>
+<li>DELETE：删除资源</li>
+</ul>
+<p>使用URL（名词）来代表资源</p>
+<ul>
+<li>资源里没有动词</li>
+<li>使用复数来代表资源列表</li>
+</ul>
+<h3 id="restcontroller">@RestController</h3>
+<p>使用RESTful风格的参数</p>
+<ul>
+<li>使用@PathVariable进行参数提取</li>
+</ul>
+<h3 id="postmapping">PostMapping</h3>
+<p>处理POST请求
+从HTTP POST请求提取body</p>
+<h3 id="json转class文件工具">json转class文件工具</h3>
+<p>idea工具：GsonFormat</p>
+<h3 id="生成http请求">生成HTTP请求</h3>
+<p>直接生成HttpServletResponse对象</p>
+<ul>
+<li>原始、简单
+直接返回HTML字符串</li>
+</ul>
+<p>返回对象，并自动格式化成JSON</p>
+<ul>
+<li>
+<p>常用</p>
+</li>
+<li>
+<p>@ResponseBody</p>
+</li>
+</ul>
+<p>模板引擎渲染</p>
+<ul>
+<li>JSP/Velocity/Freemarker</li>
+</ul>
+<h3 id="servlet-转换器">servlet-转换器</h3>
+<p>将字节流转换成java对象</p>
+<p>将java对象转换成字节流</p>
+<h3 id="周边生态系统">周边生态系统</h3>
+<p>HTTPS</p>
+<p>分布式部署</p>
+<p>扩展功能</p>
+<ul>
+<li>数据库</li>
+<li>Redis缓存</li>
+<li>信息队列</li>
+<li>RPC(Dubbo/Spring Cloud)</li>
+<li>微服务化</li>
+</ul>]]></description>
 </item><item>
     <title>Spring</title>
     <link>https://ryan-y-c.github.io/spring/</link>
     <pubDate>Sat, 09 Sep 2017 21:55:35 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/spring/</guid>
-    <description><![CDATA[Spring]]></description>
+    <description><![CDATA[<h1 id="spring-ioc容器原理与手写简单实现">Spring IoC容器原理与手写简单实现</h1>
+<h2 id="spring-容器的原理">Spring 容器的原理</h2>
+<h3 id="spring">Spring</h3>
+<p>java世界应用的事实标准</p>
+<p>Spring容器-一个IoC容器</p>
+<ul>
+<li>自动化管理对象的容器</li>
+</ul>
+<p>Spring MVC-基于Spring和Servlet的Web应用框架</p>
+<p>Spring Boot - 集成度和自动化程度更高</p>
+<h3 id="spring-容器的核心概念">Spring 容器的核心概念</h3>
+<p>Bean</p>
+<ul>
+<li>容器中的最小工作单元，通常为一个Java对象
+BeanFactory/ApplicationContext</li>
+<li>容器本身对应的Java对象
+依赖注入（DI）Dependence Injection</li>
+<li>容器负责注入所有的依赖
+控制反转（IoC）Inverse of Control</li>
+<li>用户将控制权交给了容器</li>
+</ul>
+<h3 id="简单实现spring">简单实现Spring</h3>
+<p>定义Bean</p>
+<p>加载Bean的定义</p>
+<p>实例化Bean</p>
+<p>查找依赖，实现自动化注入</p>
+<h3 id="spring的实现">Spring的实现</h3>
+<p>在XML里面定义Bean</p>
+<p>BeanDefinition的载入和解析</p>
+<p>Bean的实例化和依赖注入</p>
+<p>对外提供服务</p>
+<p>[简单实现ioc容器]https://github.com/hcsp/simple-ioc-container/pull/81</p>]]></description>
 </item><item>
     <title>MyBatis</title>
     <link>https://ryan-y-c.github.io/mybatis/</link>
     <pubDate>Sat, 02 Sep 2017 18:18:25 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/mybatis/</guid>
-    <description><![CDATA[MyBatis]]></description>
+    <description><![CDATA[<h1 id="mybatis---orm框架">MyBatis - ORM框架</h1>
+<h2 id="ormobject-relationship-mapping">ORM(Object Relationship Mapping)</h2>
+<p>对象关系映射</p>
+<ul>
+<li>自动完成对象到数据库的映射
+Association</li>
+<li>自动装配对象</li>
+</ul>
+<h2 id="mybatis">MyBatis</h2>
+<p>[MyBatis入门] <a href="https://mybatis.org/mybatis-3/zh/getting-started.html">https://mybatis.org/mybatis-3/zh/getting-started.html</a></p>
+<p>1、引入Maven依赖</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.mybatis<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>mybatis<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.5.5<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>2、创建MyBatis文件夹及其配置文件</p>
+<ul>
+<li>文件路径：main/resources/db/mybatis/config.xml</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34; ?&gt;</span>
+<span class="cp">&lt;!DOCTYPE configuration
+</span><span class="cp">  PUBLIC &#34;-//mybatis.org//DTD Config 3.0//EN&#34;
+</span><span class="cp">  &#34;http://mybatis.org/dtd/mybatis-3-config.dtd&#34;&gt;</span>
+<span class="nt">&lt;configuration&gt;</span>
+  <span class="nt">&lt;environments</span> <span class="na">default=</span><span class="s">&#34;development&#34;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;environment</span> <span class="na">id=</span><span class="s">&#34;development&#34;</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!-- dataSource链接池--&gt;</span>
+      <span class="nt">&lt;transactionManager</span> <span class="na">type=</span><span class="s">&#34;JDBC&#34;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;dataSource</span> <span class="na">type=</span><span class="s">&#34;POOLED&#34;</span><span class="nt">&gt;</span>
+      <span class="c">&lt;!--driver 设置数据库驱动 --&gt;</span>
+        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&#34;driver&#34;</span> <span class="na">value=</span><span class="s">&#34;${driver}&#34;</span><span class="nt">/&gt;</span>
+        <span class="c">&lt;!-- 连接串 --&gt;</span>
+        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&#34;url&#34;</span> <span class="na">value=</span><span class="s">&#34;${url}&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&#34;username&#34;</span> <span class="na">value=</span><span class="s">&#34;${username}&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&#34;password&#34;</span> <span class="na">value=</span><span class="s">&#34;${password}&#34;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/dataSource&gt;</span>
+    <span class="nt">&lt;/environment&gt;</span>
+  <span class="nt">&lt;/environments&gt;</span>
+  <span class="nt">&lt;mappers&gt;</span>
+    <span class="nt">&lt;mapper</span> <span class="na">resource=</span><span class="s">&#34;org/mybatis/example/BlogMapper.xml&#34;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/mappers&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>3、创建SqlSessionFactory对象</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">String resource = &#34;db/mybatis/config.xml&#34;;
+InputStream inputStream = Resources.getResourceAsStream(resource);
+SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+</code></pre></td></tr></table>
+</div>
+</div><p>4、通过接口和注解调用Mybatis进行数据库操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="c">&lt;!-- 在配置文件中 进行配置后使用注解 class中填入接口全限定类名 或者别名 --&gt;</span>
+<span class="nt">&lt;mapper</span> <span class="na">class=</span><span class="s">&#34;my.package.com.MyClass&#34;</span><span class="nt">&gt;&lt;/mapper&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">interface</span> <span class="nc">UserMapper</span><span class="o">{</span>
+    <span class="nd">@Select</span><span class="o">(</span><span class="s">&#34;select * from user&#34;</span><span class="o">)</span>
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">getUsers</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">String resource = &#34;db/mybatis/config.xml&#34;;
+InputStream inputStream = Resources.getResourceAsStream(resource);
+SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+try(SqlSession session = sqlSessionFactory.openSession()){
+    UserMapper mapper = session.getMapper(UserMapper.Class)
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>原理：</p>
+<ul>
+<li>使用代理模式通过反射和注解创建了一个UserMapper实现</li>
+</ul>
+<h2 id="配置日志">配置日志</h2>
+<p>[配置MyBatis日志]https://mybatis.org/mybatis-3/zh/logging.html</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml">  <span class="nt">&lt;settings&gt;</span>
+    <span class="nt">&lt;setting</span> <span class="na">name=</span><span class="s">&#34;logImpl&#34;</span> <span class="na">value=</span><span class="s">&#34;LOG4J&#34;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/settings&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>配置日志Maven依赖</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>log4j<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>log4j<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.2.17<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>创建log4j.properties文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"># 全局日志配置 rootlogger日志等级 DEBUG
+log4j.rootLogger=ERROR, stdout
+# MyBatis 日志配置
+log4j.logger.org.mybatis.example.BlogMapper=TRACE
+# 控制台输出
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%5p [%t] - %m%n
+</code></pre></td></tr></table>
+</div>
+</div><p>首先配置日志框架，提高问题排查效率</p>
+<p>配置数据源</p>
+<p>Mapper:接口由MyBatis动态代理(注解方式)</p>
+<ul>
+<li>优点：方便</li>
+<li>缺点：SQL复杂的时候不方便</li>
+</ul>
+<p>Mapper:用xml编写复杂的SQL</p>
+<ul>
+<li>优点：可以方便使用MyBatis的强大功能</li>
+<li>缺点：SQL和代码分离</li>
+</ul>
+<p>创建Mapper.xml文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34; ?&gt;</span>
+<span class="cp">&lt;!DOCTYPE mapper
+</span><span class="cp">  PUBLIC &#34;-//mybatis.org//DTD Mapper 3.0//EN&#34;
+</span><span class="cp">  &#34;http://mybatis.org/dtd/mybatis-3-mapper.dtd&#34;&gt;</span>
+<span class="nt">&lt;mapper</span> <span class="na">namespace=</span><span class="s">&#34;org.mybatis.example.BlogMapper&#34;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&#34;selectBlog&#34;</span> <span class="na">resultType=</span><span class="s">&#34;Blog&#34;</span><span class="nt">&gt;</span>
+    select * from Blog where id = #{id}
+  <span class="nt">&lt;/select&gt;</span>
+<span class="nt">&lt;/mapper&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>调用Mapper.xml中的sql语句</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">String resource = &#34;db/mybatis/config.xml&#34;;
+InputStream inputStream = Resources.getResourceAsStream(resource);
+SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+try(SqlSession session = sqlSessionFactory.openSession()){
+    UserMapper mapper = session.slectList(配置文件路径和sql语句名字)
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>MyBatis参数</p>
+<p>parameterType</p>
+<ul>
+<li>参数的#{}和${}
+<ul>
+<li>_#{}以sql方式替换参数 防止sql注入</li>
+<li>${}直接替换对应的参数</li>
+</ul>
+</li>
+<li>参数是按照JavaBean约定读取的</li>
+</ul>
+<p>resultType</p>
+<ul>
+<li>typeAlias
+<ul>
+<li>$区分内部类的分割符</li>
+<li>设置别名（类似类的引用）</li>
+</ul>
+</li>
+<li>写参照是按照JavaBean约定的</li>
+</ul>
+<p>&ndash; #{id}查找传入对象对应为id的属性（该对象遵循JavaBean约定）可以用Map取代临时的对象</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34; ?&gt;</span>
+<span class="cp">&lt;!DOCTYPE mapper
+</span><span class="cp">  PUBLIC &#34;-//mybatis.org//DTD Mapper 3.0//EN&#34;
+</span><span class="cp">  &#34;http://mybatis.org/dtd/mybatis-3-mapper.dtd&#34;&gt;</span>
+<span class="nt">&lt;mapper</span> <span class="na">namespace=</span><span class="s">&#34;org.mybatis.example.BlogMapper&#34;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&#34;selectBlog&#34;</span> <span class="na">resultType=</span><span class="s">&#34;Blog&#34;</span><span class="nt">&gt;</span>
+    select * from Blog where id = #{id}
+  <span class="nt">&lt;/select&gt;</span>
+<span class="nt">&lt;/mapper&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Association</p>
+<p>Map与key = 属性，value=值</p>
+<h2 id="mybatis动态sql">MyBatis动态SQL</h2>
+<p>通过传入的参数动态决定执行的sql语句</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&#34;findActiveBlogWithTitleLike&#34;</span>
+     <span class="na">resultType=</span><span class="s">&#34;Blog&#34;</span><span class="nt">&gt;</span>
+  SELECT * FROM BLOG
+  WHERE state = ‘ACTIVE’
+  <span class="nt">&lt;if</span> <span class="na">test=</span><span class="s">&#34;title != null&#34;</span><span class="nt">&gt;</span>
+    AND title like #{title}
+  <span class="nt">&lt;/if&gt;</span>
+<span class="nt">&lt;/select&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>foreach语句</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&#34;selectPostIn&#34;</span> <span class="na">resultType=</span><span class="s">&#34;domain.blog.Post&#34;</span><span class="nt">&gt;</span>
+  SELECT *
+  FROM POST P
+  WHERE ID in
+  <span class="nt">&lt;foreach</span> <span class="na">item=</span><span class="s">&#34;item&#34;</span> <span class="na">index=</span><span class="s">&#34;index&#34;</span> <span class="na">collection=</span><span class="s">&#34;list&#34;</span>
+      <span class="na">open=</span><span class="s">&#34;(&#34;</span> <span class="na">separator=</span><span class="s">&#34;,&#34;</span> <span class="na">close=</span><span class="s">&#34;)&#34;</span><span class="nt">&gt;</span>
+        #{item}
+  <span class="nt">&lt;/foreach&gt;</span>
+<span class="nt">&lt;/select&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div>]]></description>
 </item><item>
     <title>注解</title>
     <link>https://ryan-y-c.github.io/%E6%B3%A8%E8%A7%A3/</link>
     <pubDate>Thu, 31 Aug 2017 18:39:32 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/%E6%B3%A8%E8%A7%A3/</guid>
-    <description><![CDATA[注解]]></description>
+    <description><![CDATA[<h1 id="注解">注解</h1>
+<h2 id="什么是注解">什么是注解</h2>
+<p>Class</p>
+<ul>
+<li>Class是Java类的说明书</li>
+<li>通过反射或阅读说明书创建类的实例</li>
+</ul>
+<p>Annotation注解就是说明书(Class文件上携带信息)的一段信息/文本/标记</p>
+<ul>
+<li>可以携带参数</li>
+<li>可以在运行时被阅读</li>
+</ul>
+<h2 id="注解的写法">注解的写法</h2>
+<p>新建一个类的时候选择注解</p>
+<p>元注解(可以在放在注解上面的注解)</p>
+<ul>
+<li>@Retention
+<ul>
+<li>当前注解编译后保留等级（选项）</li>
+</ul>
+</li>
+<li>@Target
+<ul>
+<li>限制当前注解在什么位置可以使用(类/方法/属性)</li>
+</ul>
+</li>
+<li>@Documented</li>
+<li>@Inherited</li>
+<li>@Repeatable</li>
+</ul>
+<h2 id="注解属性">注解属性</h2>
+<p>基本数据类型+String+类及其他们的数组</p>
+<p>默认值</p>
+<p>名为value的属性</p>
+<h2 id="jdk的自带注解">JDK的自带注解</h2>
+<p>@Deprecated //废弃的方法</p>
+<p>@Override //子类覆盖父类方法</p>
+<p>@SuppressWarning //忽略检查</p>
+<p>@FunctionalInterface //函数式标记接口</p>
+<h2 id="bytebuddy">ByteBuddy</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>net.bytebuddy<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>byte-buddy<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>1.10.1<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;scope&gt;</span>compile<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="基于注解的缓存装饰器">基于注解的缓存装饰器</h2>
+<p><a href="https://github.com/hcsp/annotation-based-cache-decorator/pull/88" target="_blank" rel="noopener noreffer">基于注解的缓存装饰器</a></p>]]></description>
 </item><item>
     <title>类型与反射</title>
     <link>https://ryan-y-c.github.io/%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%8F%8D%E5%B0%84/</link>
     <pubDate>Sun, 20 Aug 2017 21:28:52 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%8F%8D%E5%B0%84/</guid>
-    <description><![CDATA[类型与反射]]></description>
+    <description><![CDATA[<h1 id="类型与反射">类型与反射</h1>
+<h2 id="java的类与class">java的类与Class</h2>
+<p>RTTI(Run-Time TypeIdentification) 运行时类型识别</p>
+<p>一个Class对象就是一个类的说明书</p>
+<ul>
+<li>JVM根据这个说明书创建这个类的实例</li>
+<li>静态变量的本质</li>
+</ul>
+<p>object类的getClass方法可以提供该对象的具体的类</p>
+<p>复习(本质时调用getClass后知道自己的类型)</p>
+<ul>
+<li>instanceof</li>
+<li>强制类型转换</li>
+</ul>
+<h2 id="class对象的生命周期">Class对象的生命周期</h2>
+<p>在第一次使用时被加载</p>
+<pre><code>  ||     链接         ||
+</code></pre>
+<p>加载-&gt;||验证-&gt;准备-&gt;解析-&gt;||初始化     =&gt;类加载过程</p>
+<p>查看类加载过程命令 verbose:class</p>
+<p>过滤命令grep</p>
+<h2 id="class与classloader">Class与ClassLoader</h2>
+<p>Classloader负责从外部系统中加载一个类</p>
+<ul>
+<li>这个类对应的Java文件并不需要存在</li>
+<li>这个类（字节码）并不一定需要存在
+<ul>
+<li>文件的本质是字节流，所以可以网络加载字节码</li>
+</ul>
+</li>
+</ul>
+<p>Classloader的双亲委派加载模型</p>
+<p>java语言规范与java虚拟机规范</p>
+<ul>
+<li>Java Language Specification JLS</li>
+<li>Java virtual Machine Specification</li>
+<li>这种分离提供了在JVM上运行其他语言的可能</li>
+</ul>
+<h2 id="反射与spring反射">反射与Spring反射</h2>
+<p>反射</p>
+<ul>
+<li>动态创建对象</li>
+<li>动态调用方法</li>
+<li>动态获得属性</li>
+</ul>]]></description>
 </item><item>
     <title>字符串原理</title>
     <link>https://ryan-y-c.github.io/java%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8E%9F%E7%90%86/</link>
     <pubDate>Fri, 18 Aug 2017 18:34:11 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/java%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8E%9F%E7%90%86/</guid>
-    <description><![CDATA[字符串原理]]></description>
+    <description><![CDATA[<h1 id="java字符串原理">Java字符串原理</h1>
+<p>不可变的字符串</p>
+<p>字符串是最重要的引用类型</p>
+<h2 id="字符串的不可变性">字符串的不可变性</h2>
+<p>如何保证字符串的不可变性</p>
+<ul>
+<li>String类是final类型的，因此是不可继承的</li>
+<li>字符串是字符的容器，String =char[]</li>
+<li>字符串数组是final的所有不能改变地址指向
+为什么字符串是不可变的</li>
+<li>安全：线程安全 ，存储安全
+<ul>
+<li>线程安全
+<ul>
+<li>因为字符串是不可变的所以所有线程只能读取字符串而不能更改，所以是线程安全的</li>
+</ul>
+</li>
+<li>存储安全
+<ul>
+<li>hashCode:将对象映射成一个数字</li>
+<li>hashCode值的约定：
+<ul>
+<li>数值不可变性，决定了String对象不可变性</li>
+<li>两个hashCode相等的对象，是一个对象。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>缺点每次修改的时候都需要重复创建新的对象</li>
+</ul>
+<p>StringBuffer和StringBuilder</p>
+<ul>
+<li>StringBuilder 不保证线程安全 可变字符序列，速度快</li>
+<li>StringBuffer 线程安全的可变字符序列，相对速度慢</li>
+</ul>
+<p>HashCode存储：将当前字符串的HashCode缓存起来</p>
+<h2 id="字符串与编码">字符串与编码</h2>
+<p>Unicode（占用四个字节）</p>
+<ul>
+<li>code point(码点）
+byte order mark(头部不可见字符-字节顺序标记)</li>
+</ul>
+<p>BMP(基本多元平面16进制的码点)</p>
+<p>编码</p>
+<ul>
+<li>utf-8
+<ul>
+<li>变长的编码方案</li>
+</ul>
+</li>
+<li>utf-16-java程序内部的存储UniCode的方法
+<ul>
+<li>十进制转十六进制：常用的是2个字节，不常用是4个字节</li>
+</ul>
+</li>
+</ul>
+<p>解码</p>]]></description>
 </item><item>
     <title>算法与数据结构</title>
     <link>https://ryan-y-c.github.io/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
     <pubDate>Sat, 12 Aug 2017 18:21:43 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid>
-    <description><![CDATA[算法与数据结构]]></description>
+    <description><![CDATA[<h1 id="算法与数据结构">算法与数据结构</h1>
+<h2 id="算法的复杂度">算法的复杂度</h2>
+<p>时间的复杂度</p>
+<ul>
+<li>O(1)-哈希桶/数组随机寻址（常数）</li>
+<li>O(n) - 遍历（线性）</li>
+<li>0(log(n))- 二分查找，二叉树（对数）</li>
+<li>O(n*log(n)) - 基于比较的排序算法的下界</li>
+<li>O(n^2) - 冒泡排序</li>
+</ul>
+<p>时间的复杂度的计算是忽略常数的</p>
+<ul>
+<li>即O(n)=O(2n)</li>
+</ul>
+<p>时间的复杂度的计算中，高阶复杂度会吞并低阶复杂度</p>
+<ul>
+<li>O(n^2)+O(n)=O(n^2)</li>
+</ul>
+<h2 id="基本数据结构---数组">基本数据结构 - 数组</h2>
+<p>随机寻址</p>
+<ul>
+<li>常数时间</li>
+</ul>
+<p>插入/删除</p>
+<ul>
+<li>线性时间</li>
+</ul>
+<p>查找</p>
+<ul>
+<li>无序：线性时间</li>
+<li>有序：对数时间（二分查找）</li>
+</ul>
+<h2 id="基本数据结构---链表">基本数据结构 - 链表</h2>
+<p>寻址</p>
+<ul>
+<li>线性时间</li>
+</ul>
+<p>插入</p>
+<ul>
+<li>常数时间</li>
+</ul>
+<p>查找</p>
+<ul>
+<li>线性时间</li>
+</ul>
+<p>手写</p>
+<ul>
+<li>翻转链表</li>
+<li>判断链表是否成环</li>
+</ul>
+<h2 id="基本数据结构---栈stack">基本数据结构 - 栈（stack）</h2>
+<p>FILO（first in last out）</p>
+<p>应用：方法栈</p>
+<h2 id="基本数据结构---队列queue">基本数据结构 - 队列（queue）</h2>
+<p>FIFO（first in first out）
+应用：线程池</p>
+<h2 id="基本数据结构---哈希表">基本数据结构 - 哈希表</h2>
+<p>查找/插入/删除都是O（1）</p>
+<p>哈希算法与碰撞</p>
+<p>哈希桶的内部实现</p>
+<h2 id="hashmap">HashMap</h2>
+<p>HashMap默认容量</p>
+<p>HashMap如何扩容</p>
+<ul>
+<li>占用容量为 当前容量*0.75时进行扩容</li>
+<li>transfer
+HashMap的数组大小为什么一定是2的幂</li>
+<li>hash&amp;（length-1）按位与</li>
+<li>只有数组的大小是2的n次方-1 二进制才能为1111进行按位与快速得到数组下标并且是均匀的
+HashMap为什么是线程不安全的</li>
+</ul>
+<p>Java7到8有哪儿些改进？为什么</p>
+<h3 id="哈希表简介">哈希表简介</h3>
+<p>核心是基于哈希值的桶和链表</p>
+<p>O（1）的平均查找、插入、删除时间</p>
+<p>缺陷是哈希值的碰撞（collision）</p>
+<h3 id="java-7-hashmap">Java 7 HashMap</h3>
+<p>经典的哈希表实现：数组+链表</p>
+<p>重点知识</p>
+<ul>
+<li>初始容量</li>
+<li>负载因子</li>
+<li>哈希算法</li>
+<li>扩容
+<ul>
+<li>低效</li>
+<li>线程不安全
+Java7 的HashMap的问题</li>
+</ul>
+</li>
+<li>容易碰到死锁</li>
+<li>潜在安全隐患
+<ul>
+<li>CVE-2011-4858,TomCat邮件组的讨论</li>
+<li>通过精心构造的恶意请求引发Dos（拒绝服务攻击）</li>
+<li>链表性能退化</li>
+</ul>
+</li>
+</ul>
+<h3 id="java8-hashmap的改进">Java8 HashMap的改进</h3>
+<p>数组+链表/红黑树</p>
+<p>使用红黑树的阈值为8符合泊松分布</p>
+<p>扩容时插入顺序的改进</p>
+<p>函数方法</p>
+<ul>
+<li>forEach</li>
+<li>compute系列</li>
+</ul>
+<p>Map的新API</p>
+<ul>
+<li>merge</li>
+<li>replace</li>
+</ul>]]></description>
 </item><item>
     <title>多线程爬虫以及ES海量数据分析</title>
     <link>https://ryan-y-c.github.io/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%88%AC%E8%99%AB%E4%BB%A5%E5%8F%8Aes%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/</link>
     <pubDate>Mon, 05 Jun 2017 10:35:25 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%88%AC%E8%99%AB%E4%BB%A5%E5%8F%8Aes%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/</guid>
-    <description><![CDATA[多线程爬虫以及ES海量数据分析]]></description>
+    <description><![CDATA[<h1 id="多线程爬虫以及es海量数据分析">多线程爬虫以及ES海量数据分析</h1>
+<h3 id="做项目原则">做项目原则</h3>
+<ul>
+<li>使用标准化、业界公认的模式和流程
+<ul>
+<li>代码仓库中不要有多余的文件</li>
+</ul>
+</li>
+<li>几乎没有本地依赖，使用者能毫无障碍的运行</li>
+<li>提交PR时候应该有相应的的信息</li>
+<li>小步快跑</li>
+<li>尽量分成小的模块进行提交</li>
+<li>越小的变更越容易修正问题</li>
+</ul>
+<h3 id="多线程爬虫以及es海量数据分析项目的原则">多线程爬虫以及ES海量数据分析项目的原则</h3>
+<ul>
+<li>使用GitHub+主干/分支模型进行开发
+<ul>
+<li>禁止直接push master</li>
+<li>所有变更通过PR进行</li>
+</ul>
+</li>
+<li>自动化代码质量检查+测试
+<ul>
+<li>Checkstyle/SpotBugs</li>
+<li>最基本的自动化测试覆盖</li>
+</ul>
+</li>
+<li>一切工作自动化</li>
+<li>规范化提交流程</li>
+</ul>
+<h3 id="创建项目骨架">创建项目骨架</h3>
+<ul>
+<li>新建GitHub仓库</li>
+<li>建立新项目
+<ul>
+<li>mvn archetype（创建项目骨架）
+<ul>
+<li>通过mvn archetype:generate命令生成项目骨架</li>
+</ul>
+</li>
+<li>IDEA - new
+<ul>
+<li>通过IDEA创建项目骨架</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>.gitignore</li>
+<li>README</li>
+<li>配置基本的代码质量检查检查插件
+<ul>
+<li>越早代价越低</li>
+</ul>
+</li>
+</ul>
+<h3 id="项目的设计流程">项目的设计流程</h3>
+<h4 id="自顶向下">自顶向下</h4>
+<ul>
+<li>多人协作</li>
+<li>多模块
+<ul>
+<li>各模块间职责明确，界限清晰</li>
+<li>基本的文档
+-基本的接口</li>
+</ul>
+</li>
+<li>小步提交</li>
+</ul>
+<h4 id="自底向上">自底向上</h4>
+<ul>
+<li>先实现功能</li>
+<li>将公用代码抽离出来</li>
+<li>通过重构实现模块化、接口化</li>
+</ul>
+<h3 id="创建ci">创建CI</h3>
+<p>创建测试类（冒烟测试）
+- 用注解方式（@Test）创建test方法</p>
+<p>引入测试类相关maven依赖</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependencys&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.junit.jupiter<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>junit-jupiter-api<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>5.6.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.junit.jupiter<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>junit-jupiter-engine<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>5.6.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;/dependencys&gt;</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;plugins&gt;</span>
+    <span class="nt">&lt;plugin&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;version&gt;</span>2.22.1<span class="nt">&lt;/version&gt;</span>
+        <span class="nt">&lt;configuration&gt;</span>
+            <span class="nt">&lt;argLine&gt;</span>-Dfile.encoding=UTF-8<span class="nt">&lt;/argLine&gt;</span>
+        <span class="nt">&lt;/configuration&gt;</span>
+    <span class="nt">&lt;/plugin&gt;</span>
+        <span class="nt">&lt;plugin&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>maven-checkstyle-plugin<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>3.1.0<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;configuration&gt;</span>
+                <span class="nt">&lt;configLocation&gt;</span>${basedir}/.circleci/checkstyle.xml<span class="nt">&lt;/configLocation&gt;</span>
+                <span class="nt">&lt;includeTestSourceDirectory&gt;</span>true<span class="nt">&lt;/includeTestSourceDirectory&gt;</span>
+                <span class="nt">&lt;enableRulesSummary&gt;</span>false<span class="nt">&lt;/enableRulesSummary&gt;</span>
+            <span class="nt">&lt;/configuration&gt;</span>
+            <span class="nt">&lt;executions&gt;</span>
+                <span class="nt">&lt;execution&gt;</span>
+                    <span class="nt">&lt;id&gt;</span>compile<span class="nt">&lt;/id&gt;</span>
+                    <span class="nt">&lt;phase&gt;</span>compile<span class="nt">&lt;/phase&gt;</span>
+                    <span class="nt">&lt;goals&gt;</span>
+                        <span class="nt">&lt;goal&gt;</span>check<span class="nt">&lt;/goal&gt;</span>
+                    <span class="nt">&lt;/goals&gt;</span>
+                <span class="nt">&lt;/execution&gt;</span>
+            <span class="nt">&lt;/executions&gt;</span>
+            <span class="nt">&lt;dependencies&gt;</span>
+                <span class="nt">&lt;dependency&gt;</span>
+                    <span class="nt">&lt;groupId&gt;</span>com.puppycrawl.tools<span class="nt">&lt;/groupId&gt;</span>
+                    <span class="nt">&lt;artifactId&gt;</span>checkstyle<span class="nt">&lt;/artifactId&gt;</span>
+                    <span class="nt">&lt;version&gt;</span>8.29<span class="nt">&lt;/version&gt;</span>
+                <span class="nt">&lt;/dependency&gt;</span>
+            <span class="nt">&lt;/dependencies&gt;</span>
+        <span class="nt">&lt;/plugin&gt;</span>
+<span class="nt">&lt;/plugins&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>如果不小心提交了代码使用git reset HEAD~1返回上一次提交前的操作
+<ul>
+<li>reset-&gt;重启</li>
+<li>commit</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">git reset HEAD~1
+</code></pre></td></tr></table>
+</div>
+</div><p>如果push到master上，使用git revert，使用git long 查看提交的id后 使用 git revert id 撤回提交</p>
+<p>如果不小心commit并且push了，如果在主干上则删除多余的提交文件，如果在自己的分支上则已同样的方式并且force push。</p>
+<h4 id="创建分支">创建分支</h4>
+<p>通过git checkout -b 分支名称 创建分支</p>
+<h4 id="查看git状态">查看git状态</h4>
+<p>git status</p>
+<h3 id="算法">算法</h3>
+<h4 id="深度优先">深度优先</h4>
+<h4 id="广度优先">广度优先</h4>
+<p>优先访问一个层次内容</p>
+<p>常用队列实现</p>
+<p>JDK的队列实现</p>
+<h4 id="程序流程">程序流程</h4>
+<p>从池中拿出一个链接，如果是没有处理过并且是想要处理的链接就进行处理，把新链接放入池中，如果是新闻链接就存储内容。将处理完的链接删除</p>
+<p>Arraylist从尾部删除元素更有效率</p>
+<h3 id="处理页面流程">处理页面流程</h3>
+<ol>
+<li>通过httpClient发送http请求并获取http响应.
+2.通过jsoup获取html内容
+通过Jsoup.parse(html);解析html</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.jsoup<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>jsoup<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.13.1<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="抓取新闻中出现的问题">抓取新闻中出现的问题</h4>
+<ol>
+<li>重复抓取 &ldquo;<a href="https://sina.cn">https://sina.cn</a>&rdquo;</li>
+</ol>
+<ul>
+<li>因为没有吧链接池中移除已经处理的链接</li>
+</ul>
+<ol start="2">
+<li>重复抓取“https://sina.cn/?reload=sina”</li>
+</ol>
+<ul>
+<li>因为处理完成后没有将处理完成的链接加入处理完成的链接池
+3.弹出新浪的登陆页</li>
+<li>因为没有设置user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.
+4 因为链接头为//开始的所以需要加上https</li>
+</ul>
+<h4 id="重构代码">重构代码</h4>
+<ol>
+<li>将复杂的逻辑提取成短小的方法。</li>
+<li>使用stream使代码更加简洁。</li>
+</ol>
+<h4 id="maven生命周期与插件配置">Maven生命周期与插件配置</h4>
+<p>自动检查工具设置。</p>
+<ul>
+<li>spotbugs(findbugs)
+<ul>
+<li>引入maven依赖</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;plugin&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>com.github.spotbugs<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>spotbugs-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>4.0.0<span class="nt">&lt;/version&gt;</span>
+  <span class="nt">&lt;dependencies&gt;</span>
+    <span class="c">&lt;!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs --&gt;</span>
+    <span class="nt">&lt;dependency&gt;</span>
+      <span class="nt">&lt;groupId&gt;</span>com.github.spotbugs<span class="nt">&lt;/groupId&gt;</span>
+      <span class="nt">&lt;artifactId&gt;</span>spotbugs<span class="nt">&lt;/artifactId&gt;</span>
+      <span class="nt">&lt;version&gt;</span>4.0.4<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;/dependency&gt;</span>
+  <span class="nt">&lt;/dependencies&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>
+<p>使用mvn spotbugs:check命令</p>
+</li>
+<li>
+<p>使用mvn spotbugs:gui命令以图形化方式提示错误</p>
+</li>
+<li>
+<p>如何阅读和使用官方文档</p>
+</li>
+<li>
+<p>maven生命周期（maven lifecycle）</p>
+</li>
+<li>
+<p>通过插件(plugin)绑定到某个maven阶段进行检查</p>
+</li>
+</ul>
+<h4 id="数据持久化">数据持久化</h4>
+<p>创建数据表</p>
+<ul>
+<li>links_to_be_processed</li>
+<li>links_already_processed</li>
+<li>news
+<ul>
+<li>news表属性
+<ul>
+<li>id</li>
+<li>title</li>
+<li>content</li>
+<li>url</li>
+<li>created_at</li>
+<li>modified_at</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create table news
+(
+    id          bigint primary key AUTO_INCREMENT,
+    title       text,
+    content     text,
+    url         varchar(200),
+    created_at  timestamp,
+    modified_at timestamp
+)
+</code></pre></td></tr></table>
+</div>
+</div><p>JDBC操作</p>
+<ul>
+<li>获取加载驱动DriverManger并创建连接connection</li>
+<li>通过连接并创建预处理语句</li>
+<li>执行查询并获取结果</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">String url=&#34;jdbc:h2:file:J:\\Crawler\\news&#34;;
+String sql=&#34;select link from links_to_be_processed&#34;;
+Connection connection = DriverManager.getConnection(url);
+PreparedStatement statement = connection.prepareStatement(sql);
+ResultSet resultSet = statement.executeQuery();
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="添加断点续存">添加断点续存</h4>
+<ul>
+<li>使用数据库实时的存储数据</li>
+<li>使用URLDecoder.decode进行字符转码。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">String href = URLDecoder.decode(aTag.attr(&#34;href&#34;), &#34;UTF-8&#34;);~
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="自动化数据库构建工具flyway">自动化数据库构建工具Flyway</h4>
+<p>Flyway 可以对数据库结构进行版本控制</p>
+<p>添加Flyway依赖</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;plugin&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.flywaydb<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>flyway-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>6.4.4<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;configuration&gt;</span>
+    <span class="nt">&lt;url&gt;</span>jdbc:h2:file:J:\Crawler\news<span class="nt">&lt;/url&gt;</span>
+    <span class="nt">&lt;user&gt;</span>ryan<span class="nt">&lt;/user&gt;</span>
+    <span class="nt">&lt;password&gt;</span>123<span class="nt">&lt;/password&gt;</span>
+    <span class="nt">&lt;/configuration&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>创建文件夹目录并创建sql文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"> my-project
+   src
+     main
+       resources
+         db
+            migration
+                R__My_view.sql
+                U1.1__Fix_indexes.sql
+                U2__Add a new table.sql
+                V1__Initial_version.sql
+                V1.1__Fix_indexes.sql
+                V2__Add a new table.sql
+</code></pre></td></tr></table>
+</div>
+</div><p>运行mvn flyway：migrate</p>
+<h4 id="ormobject-relation-mapping">ORM(Object Relation Mapping)</h4>
+<p>ORM框架MyBatis</p>
+<ul>
+<li>添加MyBatisMaven依赖</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.mybatis<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>mybatis<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.5.5<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>创建MyBatis 配置数据库连接配置文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34; ?&gt;</span>
+<span class="cp">&lt;!DOCTYPE configuration
+</span><span class="cp">  PUBLIC &#34;-//mybatis.org//DTD Config 3.0//EN&#34;
+</span><span class="cp">  &#34;http://mybatis.org/dtd/mybatis-3-config.dtd&#34;&gt;</span>
+<span class="nt">&lt;configuration&gt;</span>
+  <span class="nt">&lt;environments</span> <span class="na">default=</span><span class="s">&#34;development&#34;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;environment</span> <span class="na">id=</span><span class="s">&#34;development&#34;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;transactionManager</span> <span class="na">type=</span><span class="s">&#34;JDBC&#34;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;dataSource</span> <span class="na">type=</span><span class="s">&#34;POOLED&#34;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&#34;driver&#34;</span> <span class="na">value=</span><span class="s">&#34;${driver}&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&#34;url&#34;</span> <span class="na">value=</span><span class="s">&#34;${url}&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&#34;username&#34;</span> <span class="na">value=</span><span class="s">&#34;${username}&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&#34;password&#34;</span> <span class="na">value=</span><span class="s">&#34;${password}&#34;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/dataSource&gt;</span>
+    <span class="nt">&lt;/environment&gt;</span>
+  <span class="nt">&lt;/environments&gt;</span>
+  <span class="nt">&lt;mappers&gt;</span>
+    <span class="nt">&lt;mapper</span> <span class="na">resource=</span><span class="s">&#34;org/mybatis/example/BlogMapper.xml&#34;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/mappers&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>配置数据库配置文件操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34; ?&gt;</span>
+<span class="cp">&lt;!DOCTYPE mapper
+</span><span class="cp">  PUBLIC &#34;-//mybatis.org//DTD Mapper 3.0//EN&#34;
+</span><span class="cp">  &#34;http://mybatis.org/dtd/mybatis-3-mapper.dtd&#34;&gt;</span>
+<span class="nt">&lt;mapper</span> <span class="na">namespace=</span><span class="s">&#34;org.mybatis.example.BlogMapper&#34;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&#34;selectBlog&#34;</span> <span class="na">resultType=</span><span class="s">&#34;Blog&#34;</span><span class="nt">&gt;</span>
+    select * from Blog where id = #{id}
+  <span class="nt">&lt;/select&gt;</span>
+<span class="nt">&lt;/mapper&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用SqlSession对数据进行增删改查</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">try (SqlSession session = sqlSessionFactory.openSession()) {
+  Blog blog = (Blog) session.selectOne(&#34;org.mybatis.example.BlogMapper.selectBlog&#34;, 101);
+}
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="使用docker容器中的mysql">使用docker容器中的MySql</h4>
+<p>安装好docker后json配置加速镜像</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&#34;registry-mirrors&#34;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&#34;https://hub-mirror.c.163.com&#34;</span><span class="p">,</span>
+    <span class="s2">&#34;https://mirror.baidubce.com&#34;</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>docker教程</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">https://yeasy.gitbook.io/docker_practice/
+</code></pre></td></tr></table>
+</div>
+</div><p>下载Mysql docker镜像</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"> docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag
+</code></pre></td></tr></table>
+</div>
+</div><p>使用jdbc链接mysql</p>
+<p>-v参数使数据持久化（将数据存储到物理机的硬盘中）-v参数将docker容器中的数据映射到主机上</p>
+<p>-p 参数将容器的端口映射到主机中</p>
+<p>创建MySQL数据库</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run --name mysql -e MYSQL_ROOT_PASSWORD=123 -p 3305:3306 -v J:\Crawler\mysql-data:/var/lib/mysql -d mysql:5.7.27 --lower_case_table_names=1
+</code></pre></td></tr></table>
+</div>
+</div><p>将MySql数据库修改成UT8编码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="k">ALTER</span> <span class="k">DATABASE</span> <span class="n">database_name</span> <span class="k">CHARACTER</span> <span class="kt">SET</span> <span class="o">=</span> <span class="n">utf8mb4</span> <span class="k">COLLATE</span> <span class="o">=</span> <span class="n">utf8mb4_unicode_ci</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>并设置jdbc写入数据库为utf-8格式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">jdbc:mysql://localhost:3305/news?useUnicode=true;characterEncoding=UTF-8
+</code></pre></td></tr></table>
+</div>
+</div>]]></description>
 </item><item>
     <title>异常</title>
     <link>https://ryan-y-c.github.io/%E5%BC%82%E5%B8%B8/</link>
     <pubDate>Mon, 27 Feb 2017 21:01:16 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/%E5%BC%82%E5%B8%B8/</guid>
-    <description><![CDATA[异常]]></description>
+    <description><![CDATA[<h2 id="1-java的异常体系简介">1 Java的异常体系简介</h2>
+<p>在return语句之外，为方法提供另外的一种出口</p>
+<p>IOException通常代表“预期之内的异常”</p>
+<h2 id="2-trycatchfinally">2 try/catch/finally</h2>
+<p>如果没有try,异常将击穿所有栈帧</p>
+<p>catch可以将一个异常抓住</p>
+<p>finally执行清理工作</p>
+<p>JDK7+:try-with-resources</p>
+<h2 id="3-throwthrows">3 throw/throws</h2>
+<p>throw 抛出一个异常</p>
+<ul>
+<li>可以被丢出来的异常和错误</li>
+</ul>
+<p>throws只是一个声明</p>
+<h3 id="java的异常体系">Java的异常体系</h3>
+<p>Throwable-可以被抛出的东西（有毒）</p>
+<ul>
+<li>Exception-checked exception(受检异常，有毒)
+<ul>
+<li>意料之中的异常,IOException</li>
+<li>RuntimeException(运行时异常，无毒)</li>
+</ul>
+</li>
+<li>Error (错误，有毒)
+<ul>
+<li>代表一种不正常的情况，内存溢出
+catch的级联与合并</li>
+</ul>
+</li>
+<li>处理异常</li>
+</ul>
+<h2 id="异常的栈轨迹">异常的栈轨迹</h2>
+<h3 id="throwable">Throwable</h3>
+<p>栈轨迹Stacktrace(排查问题最重要的信息)
+异常链（Caused by）</p>
+<h2 id="异常抛出的原则">异常抛出的原则</h2>
+<p>1 能用if/else处理的，不使用异常
+2 尽早抛出异常
+3 异常要准确、带有详细信息
+4 抛出异常也比悄悄的执行错误的逻辑强多</p>
+<h3 id="异常的处理原则">异常的处理原则</h3>
+<p>本方法是否有责任处理这个异常？</p>
+<ul>
+<li>不要处理不归自己管的异常
+本方法是否有能力处理这个异常？</li>
+<li>如果自己无法处理，就抛出
+如非必要，不要忽略异常</li>
+</ul>
+<h3 id="jdk常见异常">JDK常见异常</h3>
+<p>NullPointerException(空指针异常)</p>
+<p>ClassNotFoundException(不存在类的异常)/NoClassDeFoundError</p>
+<p>IllegalStateException（不正常的状态）</p>
+<p>IllegalArgumentException（不正常的参数）</p>
+<p>IllegalAccessException（非法访问）</p>
+<p>ClassCastException</p>]]></description>
 </item><item>
     <title>HttpClient</title>
     <link>https://ryan-y-c.github.io/httpclint/</link>
     <pubDate>Wed, 22 Feb 2017 17:35:30 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/httpclint/</guid>
-    <description><![CDATA[HttpClient工具的使用]]></description>
+    <description><![CDATA[<h1 id="httpclients使用">HttpClients使用</h1>
+<h2 id="1-创建maven依赖">1 创建Maven依赖</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.httpcomponents&lt;/groupId&gt;
+    &lt;artifactId&gt;httpclient&lt;/artifactId&gt;
+    &lt;version&gt;4.5.11&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="2-创建get请求">2 创建Get请求</h2>
+<p>教程：http://hc.apache.org/httpcomponents-client-ga/index.html</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">//创建HttpClient实例
+CloseableHttpClient httpclient = HttpClients.createDefault();
+//创建Get请求实例
+HttpGet httpGet = new HttpGet(&#34;http://targethost/homepage&#34;);
+//添加Header
+//所在主机
+httpGet.addHeader(&#34;User-Agent&#34;,&#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36&#34;);
+//想要的数据类型
+httpGet.addHeader(&#34;Content-Type&#34;,&#34;text/html; charset=utf-8&#34;);
+//执行请求
+CloseableHttpResponse response1 = httpclient.execute(httpGet);
+// The underlying HTTP connection is still held by the response object
+// to allow the response content to be streamed directly from the network socket.
+// In order to ensure correct deallocation of system resources
+// the user MUST call CloseableHttpResponse#close() from a finally clause.
+// Please note that if response content is not fully consumed the underlying
+// connection cannot be safely re-used and will be shut down and discarded
+// by the connection manager. 
+try {
+    System.out.println(response1.getStatusLine());
+    HttpEntity entity1 = response1.getEntity();
+    // do something useful with the response body
+    // and ensure it is fully consumed
+    EntityUtils.consume(entity1);
+} finally {
+    response1.close();
+}
+
+//创建Post请求
+HttpPost httpPost = new HttpPost(&#34;http://targethost/login&#34;);
+List &lt;NameValuePair&gt; nvps = new ArrayList &lt;NameValuePair&gt;();
+nvps.add(new BasicNameValuePair(&#34;username&#34;, &#34;vip&#34;));
+nvps.add(new BasicNameValuePair(&#34;password&#34;, &#34;secret&#34;));
+httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+CloseableHttpResponse response2 = httpclient.execute(httpPost);
+
+try {
+    System.out.println(response2.getStatusLine());
+    HttpEntity entity2 = response2.getEntity();
+    // do something useful with the response body
+    // and ensure it is fully consumed
+    EntityUtils.consume(entity2);
+} finally {
+    response2.close();
+}
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="3-html解析器jsoup">3 HTML解析器Jsoup</h2>
+<p>Maven依赖</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;dependency&gt;
+    &lt;groupId&gt;org.jsoup&lt;/groupId&gt;
+    &lt;artifactId&gt;jsoup&lt;/artifactId&gt;
+    &lt;version&gt;1.11.2&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre></td></tr></table>
+</div>
+</div><p>解析String类型的html</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">Document document = Jsoup.parse(html);  //  将字符串解析成Document对象
+</code></pre></td></tr></table>
+</div>
+</div><p>Jsoup可以使用Jsoup中提供的一些静态方法从网络获取html文档并进行解析成Document对象</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public static void main(String[] args) throws Exception{
+        Document document = Jsoup.connect(&#34;http://blog.beifengtz.com/&#34;).get();
+        System.out.println(document);
+    }
+</code></pre></td></tr></table>
+</div>
+</div><p>// 爬取GitHub的Pull request并存储为CSV文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="nn">com.github.hcsp.io</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.apache.commons.io.FileUtils</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.apache.http.HttpStatus</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.http.client.methods.CloseableHttpResponse</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.http.client.methods.HttpGet</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.http.impl.client.CloseableHttpClient</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.http.impl.client.HttpClients</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.http.util.EntityUtils</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.jsoup.Jsoup</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.jsoup.nodes.Document</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.jsoup.nodes.Element</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.ArrayList</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Collections</span><span class="o">;</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Crawler</span> <span class="o">{</span>
+    <span class="c1">// 给定一个仓库名，例如&#34;golang/go&#34;，或者&#34;gradle/gradle&#34;，读取前n个Pull request并保存至csvFile指定的文件中，格式如下：
+</span><span class="c1"></span>    <span class="c1">// number,author,title
+</span><span class="c1"></span>    <span class="c1">// 12345,blindpirate,这是一个标题
+</span><span class="c1"></span>    <span class="c1">// 12345,FrankFang,这是第二个标题
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">savePullRequestsToCSV</span><span class="o">(</span><span class="n">String</span> <span class="n">repo</span><span class="o">,</span> <span class="kt">int</span> <span class="n">n</span><span class="o">,</span> <span class="n">File</span> <span class="n">csvFile</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">html</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="o">;</span>
+        <span class="n">CloseableHttpClient</span> <span class="n">httpclient</span> <span class="o">=</span> <span class="n">HttpClients</span><span class="o">.</span><span class="na">createDefault</span><span class="o">();</span>
+        <span class="n">HttpGet</span> <span class="n">httpGet</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HttpGet</span><span class="o">(</span><span class="s">&#34;http://GitHub.com/&#34;</span> <span class="o">+</span> <span class="n">repo</span> <span class="o">+</span> <span class="s">&#34;/pulls&#34;</span><span class="o">);</span>
+        <span class="n">CloseableHttpResponse</span> <span class="n">response</span> <span class="o">=</span> <span class="n">httpclient</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="n">httpGet</span><span class="o">);</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getStatusLine</span><span class="o">().</span><span class="na">getStatusCode</span><span class="o">()</span> <span class="o">==</span> <span class="n">HttpStatus</span><span class="o">.</span><span class="na">SC_OK</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">html</span> <span class="o">=</span> <span class="n">EntityUtils</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getEntity</span><span class="o">(),</span> <span class="s">&#34;UTF-8&#34;</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="n">Document</span> <span class="n">document</span> <span class="o">=</span> <span class="n">Jsoup</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">html</span><span class="o">);</span>
+            <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Element</span><span class="o">&gt;</span> <span class="n">elements</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="s">&#34;.js-issue-row&#34;</span><span class="o">);</span>
+            <span class="n">FileUtils</span><span class="o">.</span><span class="na">writeLines</span><span class="o">(</span><span class="n">csvFile</span><span class="o">,</span> <span class="n">Collections</span><span class="o">.</span><span class="na">singleton</span><span class="o">(</span><span class="s">&#34;number,author,title&#34;</span><span class="o">),</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">((</span><span class="n">elements</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;=</span> <span class="n">0</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+                    <span class="n">String</span> <span class="n">number</span> <span class="o">=</span> <span class="n">elements</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">).</span><span class="na">attr</span><span class="o">(</span><span class="s">&#34;id&#34;</span><span class="o">).</span><span class="na">split</span><span class="o">(</span><span class="s">&#34;_&#34;</span><span class="o">)[</span><span class="n">1</span><span class="o">];</span>
+                    <span class="n">String</span> <span class="n">title</span> <span class="o">=</span> <span class="n">elements</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">).</span><span class="na">select</span><span class="o">(</span><span class="s">&#34;[data-hovercard-type=pull_request]&#34;</span><span class="o">).</span><span class="na">text</span><span class="o">();</span>
+                    <span class="n">String</span> <span class="n">author</span> <span class="o">=</span> <span class="n">elements</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">).</span><span class="na">select</span><span class="o">(</span><span class="s">&#34;[data-hovercard-type=user]&#34;</span><span class="o">).</span><span class="na">text</span><span class="o">();</span>
+                    <span class="n">StringBuffer</span> <span class="n">pr</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuffer</span><span class="o">().</span><span class="na">append</span><span class="o">(</span><span class="n">number</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">&#34;,&#34;</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="n">author</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">&#34;,&#34;</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="n">title</span><span class="o">);</span>
+                    <span class="n">FileUtils</span><span class="o">.</span><span class="na">writeLines</span><span class="o">(</span><span class="n">csvFile</span><span class="o">,</span> <span class="n">Collections</span><span class="o">.</span><span class="na">singleton</span><span class="o">(</span><span class="n">pr</span><span class="o">),</span> <span class="kc">true</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">response</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>配置Maven</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">&#34;http://maven.apache.org/POM/4.0.0&#34;</span> <span class="na">xmlns:xsi=</span><span class="s">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
+         <span class="na">xsi:schemaLocation=</span><span class="s">&#34;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&#34;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+
+    <span class="nt">&lt;groupId&gt;</span>hcsp<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>save-pull-requests-to-csv<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+
+    <span class="nt">&lt;properties&gt;</span>
+        <span class="nt">&lt;maven.compiler.source&gt;</span>1.8<span class="nt">&lt;/maven.compiler.source&gt;</span>
+        <span class="nt">&lt;maven.compiler.target&gt;</span>1.8<span class="nt">&lt;/maven.compiler.target&gt;</span>
+        <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
+    <span class="nt">&lt;/properties&gt;</span>
+
+    <span class="nt">&lt;repositories&gt;</span>
+        <span class="nt">&lt;repository&gt;</span>
+            <span class="nt">&lt;id&gt;</span>alimaven<span class="nt">&lt;/id&gt;</span>
+            <span class="nt">&lt;name&gt;</span>aliyun maven<span class="nt">&lt;/name&gt;</span>
+            <span class="nt">&lt;url&gt;</span>http://maven.aliyun.com/nexus/content/groups/public/<span class="nt">&lt;/url&gt;</span>
+        <span class="nt">&lt;/repository&gt;</span>
+    <span class="nt">&lt;/repositories&gt;</span>
+    <span class="nt">&lt;dependencies&gt;</span>
+        <span class="nt">&lt;dependency&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.kohsuke<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>github-api<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>1.95<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+        <span class="nt">&lt;/dependency&gt;</span>
+        <span class="nt">&lt;dependency&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>com.opencsv<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>opencsv<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>4.6<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+        <span class="nt">&lt;/dependency&gt;</span>
+        <span class="nt">&lt;dependency&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.junit.jupiter<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>junit-jupiter-api<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>5.6.0<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+        <span class="nt">&lt;/dependency&gt;</span>
+        <span class="nt">&lt;dependency&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.junit.jupiter<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>junit-jupiter-engine<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>5.6.0<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+        <span class="nt">&lt;/dependency&gt;</span>
+        <span class="c">&lt;!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient --&gt;</span>
+        <span class="nt">&lt;dependency&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.apache.httpcomponents<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>httpclient<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>4.5.11<span class="nt">&lt;/version&gt;</span>
+        <span class="nt">&lt;/dependency&gt;</span>
+        <span class="c">&lt;!-- https://mvnrepository.com/artifact/org.jsoup/jsoup --&gt;</span>
+        <span class="nt">&lt;dependency&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.jsoup<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>jsoup<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>1.12.2<span class="nt">&lt;/version&gt;</span>
+        <span class="nt">&lt;/dependency&gt;</span>
+        <span class="c">&lt;!-- https://mvnrepository.com/artifact/commons-io/commons-io --&gt;</span>
+        <span class="nt">&lt;dependency&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>commons-io<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>commons-io<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>2.6<span class="nt">&lt;/version&gt;</span>
+        <span class="nt">&lt;/dependency&gt;</span>
+    <span class="nt">&lt;/dependencies&gt;</span>
+
+    <span class="nt">&lt;build&gt;</span>
+        <span class="nt">&lt;plugins&gt;</span>
+            <span class="nt">&lt;plugin&gt;</span>
+                <span class="nt">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="nt">&lt;/artifactId&gt;</span>
+                <span class="nt">&lt;version&gt;</span>2.22.1<span class="nt">&lt;/version&gt;</span>
+                <span class="nt">&lt;configuration&gt;</span>
+                    <span class="nt">&lt;argLine&gt;</span>-Dfile.encoding=UTF-8<span class="nt">&lt;/argLine&gt;</span>
+                <span class="nt">&lt;/configuration&gt;</span>
+            <span class="nt">&lt;/plugin&gt;</span>
+                <span class="nt">&lt;plugin&gt;</span>
+                    <span class="nt">&lt;artifactId&gt;</span>maven-checkstyle-plugin<span class="nt">&lt;/artifactId&gt;</span>
+                    <span class="nt">&lt;version&gt;</span>3.1.0<span class="nt">&lt;/version&gt;</span>
+                    <span class="nt">&lt;configuration&gt;</span>
+                        <span class="nt">&lt;configLocation&gt;</span>${basedir}/.circleci/checkstyle.xml<span class="nt">&lt;/configLocation&gt;</span>
+                        <span class="nt">&lt;includeTestSourceDirectory&gt;</span>true<span class="nt">&lt;/includeTestSourceDirectory&gt;</span>
+                        <span class="nt">&lt;enableRulesSummary&gt;</span>false<span class="nt">&lt;/enableRulesSummary&gt;</span>
+                    <span class="nt">&lt;/configuration&gt;</span>
+                    <span class="nt">&lt;executions&gt;</span>
+                        <span class="nt">&lt;execution&gt;</span>
+                            <span class="nt">&lt;id&gt;</span>compile<span class="nt">&lt;/id&gt;</span>
+                            <span class="nt">&lt;phase&gt;</span>compile<span class="nt">&lt;/phase&gt;</span>
+                            <span class="nt">&lt;goals&gt;</span>
+                                <span class="nt">&lt;goal&gt;</span>check<span class="nt">&lt;/goal&gt;</span>
+                            <span class="nt">&lt;/goals&gt;</span>
+                        <span class="nt">&lt;/execution&gt;</span>
+                    <span class="nt">&lt;/executions&gt;</span>
+                    <span class="nt">&lt;dependencies&gt;</span>
+                        <span class="nt">&lt;dependency&gt;</span>
+                            <span class="nt">&lt;groupId&gt;</span>com.puppycrawl.tools<span class="nt">&lt;/groupId&gt;</span>
+                            <span class="nt">&lt;artifactId&gt;</span>checkstyle<span class="nt">&lt;/artifactId&gt;</span>
+                            <span class="nt">&lt;version&gt;</span>8.29<span class="nt">&lt;/version&gt;</span>
+                        <span class="nt">&lt;/dependency&gt;</span>
+                    <span class="nt">&lt;/dependencies&gt;</span>
+                <span class="nt">&lt;/plugin&gt;</span>
+        <span class="nt">&lt;/plugins&gt;</span>
+    <span class="nt">&lt;/build&gt;</span>
+<span class="nt">&lt;/project&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div>]]></description>
 </item><item>
     <title>Web前后端基础架构原理</title>
     <link>https://ryan-y-c.github.io/web%E5%89%8D%E5%90%8E%E7%AB%AF%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86/</link>
     <pubDate>Tue, 07 Feb 2017 21:20:29 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/web%E5%89%8D%E5%90%8E%E7%AB%AF%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86/</guid>
-    <description><![CDATA[Web前后端基础架构原理]]></description>
+    <description><![CDATA[<h1 id="web前后端基础架构原理">Web前后端基础架构原理</h1>
+<h2 id="1-计算机网络是如何工作的">1 计算机网络是如何工作的</h2>
+<p>在打开网页的时候发生了什么</p>
+<ul>
+<li>主机</li>
+<li>域名与DNS</li>
+<li>端口：HTTPS协议的默认端口是443，HTTP协议默认的端口是80
+TCP协议
+HTTP协议</li>
+</ul>
+<h3 id="2-使用java代码访问github的issues">2 使用Java代码访问GitHub的issues</h3>
+<p>选择一个合适的客户端</p>
+<ul>
+<li>如何快速上手使用自己从没用过的库？
+设置正确的HTTP header
+发送请求，等待响应
+解析拿到的响应</li>
+</ul>
+<h3 id="3-同步加载与异步加载">3 同步加载与异步加载</h3>
+<p>1 发送请求
+2 接受响应 html
+3 html转换成Document
+4 筛选值</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">    // 给定一个仓库名，例如&#34;golang/go&#34;，或者&#34;gradle/gradle&#34;，返回第一页的Pull request信息
+    public static List&lt;GitHubPullRequest&gt; getFirstPageOfPullRequests(String repo) throws IOException {
+        List&lt;GitHubPullRequest&gt; pr = new ArrayList&lt;&gt;();
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(&#34;https://github.com/&#34; + repo + &#34;/pulls&#34;);
+        CloseableHttpResponse response1 = httpclient.execute(httpGet);
+        try {
+            HttpEntity entity1 = response1.getEntity();
+            InputStream is = entity1.getContent();
+            String html = IOUtils.toString(is, &#34;UTF-8&#34;);
+            Document document = Jsoup.parse(html);
+            ArrayList&lt;Element&gt; elements = document.select(&#34;.js-issue-row&#34;);
+            for (Element e : elements) {
+                try {
+                    pr.add(
+                            new GitHubPullRequest(Integer.parseInt(e.child(0).child(1).child(0).attr(&#34;href&#34;).substring(20)),
+                                    e.child(0).child(1).child(0).text(),
+                                    e.child(0).child(1).child(2).child(0).child(1).text())
+                    );
+                } catch (RuntimeException e1) {
+                    pr.add(
+                            new GitHubPullRequest(Integer.parseInt(e.child(0).child(1).child(0).attr(&#34;href&#34;).substring(20)),
+                                    e.child(0).child(1).child(0).text(),
+                                    e.child(0).child(1).child(3).child(0).child(1).text()));
+                }
+            }
+        } finally {
+            response1.close();
+        }
+        return pr;
+    }
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="4-反爬虫">4 反爬虫</h3>
+<ol>
+<li>返回错误的状态码</li>
+</ol>
+<ul>
+<li>states 401/403</li>
+</ul>
+<ol start="2">
+<li>返回错误的数据</li>
+</ol>
+<h3 id="5-http-method方法">5 HTTP method（方法）</h3>
+<ul>
+<li>GET 获取</li>
+<li>POST 发送
+<ul>
+<li>Request Payload(请求有效负载)</li>
+<li>发送Json数据</li>
+<li>放在http的body里面</li>
+</ul>
+</li>
+<li>PUT</li>
+<li>DELETE</li>
+</ul>
+<h3 id="6-http-status状态码">6 HTTP status(状态码)</h3>
+<p>301 永久移动，将地址移动另一个位置
+4&hellip; 客户端错误</p>
+<h3 id="7-http-请求-header">7 HTTP 请求 header</h3>
+<p>重要的header</p>
+<ul>
+<li>Response Header</li>
+<li>Request Header
+请求
+<ul>
+<li>Accept*</li>
+<li>Cookie 登录凭证</li>
+<li>User-Agent:区分浏览器</li>
+<li>Referer：当前页面跳转过来的页面
+响应
+Content-Type:当前http响应类型</li>
+</ul>
+</li>
+<li>application/zip可以支持下载</li>
+<li>img /jpeg 图片请求
+Transfer-Encoding:传输编码</li>
+</ul>
+<h3 id="8-http-body">8 HTTP body</h3>
+<p>HTTP request body</p>
+<ul>
+<li>表单</li>
+<li>K-V对
+HTTP response body</li>
+<li>JSON</li>
+<li>HTML/XML</li>
+<li>二进制（图片/下载文件）</li>
+</ul>
+<h3 id="9-http协议是无状态的">9 HTTP协议是无状态的</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="nn">com.github.hcsp.http</span><span class="o">;</span>
+
+
+<span class="kn">import</span> <span class="nn">com.alibaba.fastjson.JSON</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.apache.http.HttpEntity</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.http.client.methods.CloseableHttpResponse</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.http.client.methods.HttpGet</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.http.client.methods.HttpPost</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.http.entity.StringEntity</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.http.impl.client.CloseableHttpClient</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.http.impl.client.HttpClients</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.http.util.EntityUtils</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Map</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Crawler</span> <span class="o">{</span>	<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Crawler</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">loginAndGetResponse</span><span class="o">(</span><span class="n">String</span> <span class="n">username</span><span class="o">,</span> <span class="n">String</span> <span class="n">password</span><span class="o">)</span> <span class="o">{}</span>	    <span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">loginAndGetResponse</span><span class="o">(</span><span class="n">String</span> <span class="n">username</span><span class="o">,</span> <span class="n">String</span> <span class="n">password</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="n">CloseableHttpClient</span> <span class="n">httpclient</span> <span class="o">=</span> <span class="n">HttpClients</span><span class="o">.</span><span class="na">createDefault</span><span class="o">();</span>
+
+        <span class="n">HttpPost</span> <span class="n">httpPost</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HttpPost</span><span class="o">(</span><span class="s">&#34;http://47.91.156.35:8000/auth/login&#34;</span><span class="o">);</span>
+        <span class="n">httpPost</span><span class="o">.</span><span class="na">addHeader</span><span class="o">(</span><span class="s">&#34;Content-Type&#34;</span><span class="o">,</span> <span class="s">&#34;application/json;charset=utf-8&#34;</span><span class="o">);</span>
+        <span class="n">httpPost</span><span class="o">.</span><span class="na">addHeader</span><span class="o">(</span><span class="s">&#34;User-Agent&#34;</span><span class="o">,</span> <span class="s">&#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.100 Safari/537.36&#34;</span><span class="o">);</span>
+
+        <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;username&#34;</span><span class="o">,</span> <span class="s">&#34;xdml&#34;</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;password&#34;</span><span class="o">,</span> <span class="s">&#34;xdml&#34;</span><span class="o">);</span>
+        <span class="n">String</span> <span class="n">user</span> <span class="o">=</span> <span class="n">JSON</span><span class="o">.</span><span class="na">toJSONString</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
+
+        <span class="n">httpPost</span><span class="o">.</span><span class="na">setEntity</span><span class="o">(</span><span class="k">new</span> <span class="n">StringEntity</span><span class="o">(</span><span class="n">user</span><span class="o">,</span> <span class="s">&#34;utf-8&#34;</span><span class="o">));</span>
+        <span class="n">CloseableHttpResponse</span> <span class="n">resp</span> <span class="o">=</span> <span class="n">httpclient</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="n">httpPost</span><span class="o">);</span>
+        <span class="n">String</span> <span class="n">cookie</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="na">getFirstHeader</span><span class="o">(</span><span class="s">&#34;Set-Cookie&#34;</span><span class="o">).</span><span class="na">getValue</span><span class="o">().</span><span class="na">split</span><span class="o">(</span><span class="s">&#34;;&#34;</span><span class="o">)[</span><span class="n">0</span><span class="o">];</span>
+
+        <span class="n">HttpGet</span> <span class="n">httpGet</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HttpGet</span><span class="o">(</span><span class="s">&#34;http://47.91.156.35:8000/auth&#34;</span><span class="o">);</span>
+        <span class="n">httpGet</span><span class="o">.</span><span class="na">addHeader</span><span class="o">(</span><span class="s">&#34;Cookie&#34;</span><span class="o">,</span> <span class="n">cookie</span><span class="o">);</span>
+        <span class="n">CloseableHttpResponse</span> <span class="n">response1</span> <span class="o">=</span> <span class="n">httpclient</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="n">httpGet</span><span class="o">);</span>
+
+        <span class="n">HttpEntity</span> <span class="n">entity1</span> <span class="o">=</span> <span class="n">response1</span><span class="o">.</span><span class="na">getEntity</span><span class="o">();</span>
+        <span class="n">String</span> <span class="n">body</span> <span class="o">=</span> <span class="n">EntityUtils</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">entity1</span><span class="o">,</span> <span class="s">&#34;utf-8&#34;</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">body</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>	<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>]]></description>
 </item></channel>
 </rss>

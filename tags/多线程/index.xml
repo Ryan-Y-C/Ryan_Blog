@@ -9,6 +9,172 @@
     <pubDate>Sat, 15 Apr 2017 20:19:10 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/%E5%A4%9A%E7%BA%BF%E7%A8%8B/</guid>
-    <description><![CDATA[多线程]]></description>
+    <description><![CDATA[<h3 id="1-多线程与并发原理">1 多线程与并发原理</h3>
+<ul>
+<li>Java 的执行模型是同步/阻塞（block）的</li>
+<li>默认情况下只有一个线程
+<ul>
+<li>处理问题非常自然</li>
+<li>但具有严重的性能问题</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-thread">2 Thread</h3>
+<ul>
+<li>Java中只有这么一种东西代表线程</li>
+<li>start方法才能并发执行</li>
+<li>没多开一个线程，就多一个执行流</li>
+<li>方法栈（局部变量）是线程私有的</li>
+<li>静态变量/类变量是被所有线程共享的</li>
+</ul>
+<h3 id="3-多线程带来的性能的提升">3 多线程带来的性能的提升</h3>
+<p>对于IO密集型应用极其有用</p>
+<ul>
+<li>网络IO（通常包括数据库）</li>
+<li>文件IO
+对于密集型应用稍有折扣</li>
+</ul>
+<p>性能提升上线，单核CPU100</p>
+<ul>
+<li>为什么需要多线程？</li>
+<li>多线程带来了什么问题，如何避免？</li>
+<li>线程的属性、状态、生命周期详解</li>
+<li>什么是ThreadLocal？</li>
+<li>为什么需要线程池？</li>
+<li>线程池的构造函数中的参数都是什么含义？</li>
+</ul>
+<p>线程安全</p>
+<ul>
+<li>原子性</li>
+<li>共享变量</li>
+<li>默认的实现几乎都是线程不安全的</li>
+</ul>
+<p>线程不安全的表现
+数据错误</p>
+<ul>
+<li>i++</li>
+<li>if-then-do</li>
+</ul>
+<p>hashMap线程不安全原因：“https://blog.csdn.net/luxia_24/article/details/52344367”//
+“https://mp.weixin.qq.com/s?src=3&amp;timestamp=1587039264&amp;ver=1&amp;signature=6oFg-q-hiaeFxUciDdYlmAEh5vUmrF5V-wlMFqRLzDV*FYd6yL4pdWokFybdsFj0NoxuZuOIgnY1Mwv-3FLVI2V61gJruVhB1aRnaZIBGp5Vz9Pbt9JTIh-BWFSS4HY9Yclh-xi8nJ8eCan6LeDn8gv6M2w0cCoMauf-XnmdqOg=”
+hashMap 死循环问题</p>
+<p>死锁例子：</p>
+<ul>
+<li>有四个上锁的门A1、B1、A2、B2,A1中放着B1，A2中放着B2。钥匙一可以打开A1,A2,钥匙二可以打开B1,B2。</li>
+<li>小明拿着钥匙一打开了A1的门,必须使用钥匙二打开B1的门才可以出去，而钥匙二小红打开了B2的门，需要钥匙一才可以打开A2的门。</li>
+<li>等待对方归还钥匙才能出去。
+死锁原因：</li>
+<li>多个线程相互持有对方资源，促使单独一方没有获取全部资源使程序无法继续执行下去。</li>
+</ul>
+<p>死锁问题排查</p>
+<ul>
+<li>1、找到死锁进程ID
+<ul>
+<li>jps：列出Java进程命令。</li>
+</ul>
+</li>
+<li>2、jstack 进程ID。
+<ul>
+<li>打印当前进程所有信息</li>
+</ul>
+</li>
+<li>3、 看方法栈（stack）停留的位置。看Java的提示。
+多线程的经典问题：哲学家用餐问题
+synchronized同步
+预防死锁产生的原则：</li>
+<li>释放资源</li>
+<li>所有的线程都按照相同的顺序所得资源的锁</li>
+</ul>
+<h3 id="线程安全">线程安全</h3>
+<p>实现线程安全的基本手段</p>
+<ul>
+<li>不可变类
+<ul>
+<li>Interger/String/&hellip;</li>
+</ul>
+</li>
+<li>synchronized 同步块</li>
+<li>同步块是什么东西？
+<ul>
+<li>synchronized指定一个对象把这个对象当成锁</li>
+<li>static synchronized 方法
+<ul>
+<li>把class对象当成锁</li>
+<li>等价于下面代码</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">    - 实例的synchronized方法把该实例当成实例锁
+synchronized(this){
+
+} 
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>Collection.synchronized（线程同步工具方法）
+所有的集合线程都不是安全的，比如 list map link hashMap treeSet
+实现线程安全的基本手段</li>
+<li>JUC工具包
+<ul>
+<li>AtomicInteger/..（原子级）
+<ul>
+<li>i++不是原子的</li>
+<li>cup从内存中取i</li>
+<li>+1</li>
+<li>把结果写回内存</li>
+</ul>
+</li>
+<li>ConcurrentHashMap(同步HashMap)
+<ul>
+<li>任何使用HashMap有线程安全问题的地方，都可以使用ConcurrentHashMap替换即可。</li>
+</ul>
+</li>
+<li>ReentrantLock（可重入锁）
+<ul>
+<li>一个地方加锁，在另一个地方解锁</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="object类里的线程方法">Object类里的线程方法</h3>
+<p>线程的历史</p>
+<ul>
+<li>Java从一开始就把线程作为语言的特性，提供语言级的支持
+为什么java中所有的对象都可以成为锁？</li>
+<li>Object.wait()/notify()/notifyAll()方法</li>
+</ul>
+<h3 id="多线程的经典问题_生产者消费者模型">多线程的经典问题_生产者/消费者模型</h3>
+<p>使用三种方法来解决它</p>
+<ul>
+<li>wait()/notify/notifyAll</li>
+<li>Lock/Condition</li>
+<li>BlockingQueue</li>
+</ul>
+<h3 id="线程池与callablefuture">线程池与Callable/Future</h3>
+<p>什么是线程池
+Executors(线程)</p>
+<ul>
+<li>线程是昂贵的（Java线程模型的缺陷）
+<ul>
+<li>Java线程与系统中的线程进行绑定</li>
+</ul>
+</li>
+<li>线程池是预先定义好的若干个线程</li>
+<li>Java中的线程池
+Callable/Future</li>
+<li>类比Runnable,Callable可以返回值，抛出异常</li>
+<li>Future代表一个“未来才会返回的结果”</li>
+</ul>]]></description>
 </item></channel>
 </rss>

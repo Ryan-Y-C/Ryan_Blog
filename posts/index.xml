@@ -9,56 +9,1560 @@
     <pubDate>Mon, 25 Sep 2017 19:02:18 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/java%E7%A8%8B%E5%BA%8F%E7%9A%84%E9%83%A8%E7%BD%B2/</guid>
-    <description><![CDATA[]]></description>
+    <description><![CDATA[<h1 id="java程序的部署">Java程序的部署</h1>
+<p>分布式</p>
+<ul>
+<li>1、负载均衡</li>
+<li>2、容灾（单点故障）</li>
+<li>数据一致性
+<ul>
+<li>多台设备使用统一个数据库-单一数据源</li>
+</ul>
+</li>
+<li>HTTP是无状态的</li>
+</ul>
+<h3 id="部署">部署</h3>
+<p>监听端口</p>
+<p>响应HTTP请求</p>
+<p>进行预定义的业务逻辑处理</p>
+<p>部署的版本需要不停的进行更新（分布式更新）</p>
+<h3 id="分布和部署要解决的问题">分布和部署要解决的问题</h3>
+<p>环境问题</p>
+<ul>
+<li>开发环境（测试环境）</li>
+<li>预发布环境（预生产环境）</li>
+<li>生产环境（正式环境）</li>
+</ul>
+<p>环境兼容问题</p>
+<ul>
+<li>硬件/软件</li>
+<li>数据库等</li>
+</ul>
+<h3 id="发布和部署java程序">发布和部署Java程序</h3>
+<p>要解决的问题</p>
+<ul>
+<li>编写的代码</li>
+<li>所依赖的第三方库</li>
+<li>你所依赖的特殊环境配置（数据库/缓存等）</li>
+<li>稳定性</li>
+<li>升级和回滚</li>
+</ul>
+<h2 id="1使用maven-exec-plugin">1：使用Maven exec plugin</h2>
+<p>[exec官方文档] <a href="https://www.mojohaus.org/exec-maven-plugin/">https://www.mojohaus.org/exec-maven-plugin/</a>
+导入maven依赖</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;plugin&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.codehaus.mojo<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>exec-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.0.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;configuration&gt;</span>
+        <span class="nt">&lt;executable&gt;</span>java<span class="nt">&lt;/executable&gt;</span>
+        <span class="nt">&lt;arguments&gt;</span>
+            <span class="nt">&lt;argument&gt;</span>-classpath<span class="nt">&lt;/argument&gt;</span>
+                        <span class="c">&lt;!-- automatically creates the classpath using all project dependencies,
+</span><span class="c">                             also adding the project build directory --&gt;</span>
+            <span class="nt">&lt;classpath/&gt;</span>
+            <span class="nt">&lt;argument&gt;</span>com.example.Main<span class="nt">&lt;/argument&gt;</span>
+        <span class="nt">&lt;/arguments&gt;</span>
+    <span class="nt">&lt;/configuration&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>运行时加-x参数可以查看详细日志</p>
+<p>自动将所有的传递性依赖加入</p>
+<p>优点：简单</p>
+<p>缺点：不适用于自动化的场景</p>
+<h2 id="2jar包">2：jar包</h2>
+<p>运行mvn命令创造jar包</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">mvn package
+</code></pre></td></tr></table>
+</div>
+</div><p>使用 java -jar [jar包名字] 启动程序</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">java -classpath com.github.Main
+</code></pre></td></tr></table>
+</div>
+</div><p>解决jar包文件不完整问题
+[相关blog] <a href="https://www.cnblogs.com/thinking-better/p/7827368.html">https://www.cnblogs.com/thinking-better/p/7827368.html</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;plugin&gt;</span>
+                <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+                <span class="nt">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+                <span class="nt">&lt;version&gt;</span>1.5.3.RELEASE<span class="nt">&lt;/version&gt;</span>
+                <span class="nt">&lt;configuration&gt;</span>
+                    <span class="nt">&lt;mainClass&gt;</span>com.github.hcsp.Application<span class="nt">&lt;/mainClass&gt;</span>
+                <span class="nt">&lt;/configuration&gt;</span>
+                <span class="nt">&lt;executions&gt;</span>
+                    <span class="nt">&lt;execution&gt;</span>
+                        <span class="nt">&lt;goals&gt;</span>
+                            <span class="nt">&lt;goal&gt;</span>repackage<span class="nt">&lt;/goal&gt;</span>
+                        <span class="nt">&lt;/goals&gt;</span>
+                    <span class="nt">&lt;/execution&gt;</span>
+                <span class="nt">&lt;/executions&gt;</span>
+            <span class="nt">&lt;/plugin&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>设置程序端口</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">java -jar -Dserver.port=8081 target\spring-aop-redis-mysql-0.0.1.jar
+</code></pre></td></tr></table>
+</div>
+</div><p>jar包</p>
+<ul>
+<li>编译后的代码打包
+可以直接运行的jar包</li>
+<li>jar包与Manifest</li>
+</ul>
+<p>优点：简单可靠</p>
+<p>缺点：依赖于JVM环境</p>
+<h2 id="docker">Docker</h2>
+<p>创建Dockerfile</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">FROM java:openjdk-8u111-alpine
+
+RUN mkdir /app
+
+WORKDIR /app
+
+COPY target/spring-aop-redis-mysql-0.0.1.jar /app
+
+EXPOSE 8080
+
+CMD [&#34;java&#34;,&#34;-jar&#34;,&#34;spring-aop-redis-mysql-0.0.1.jar&#34;]
+</code></pre></td></tr></table>
+</div>
+</div><p>运行 //docker build .//创建镜像</p>
+<p>创建application.properties配置文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"># 请勿改变数据库名、端口、用户名及密码
+spring.datasource.url=jdbc:mysql://localhost:3306/mall?characterEncoding=utf-8
+spring.datasource.username=root
+spring.datasource.password=123456
+# 请勿改变Redis端口号
+spring.redis.host=localhost
+spring.redis.port=6379
+
+spring.aop.proxy-target-class=true
+mybatis.config-location=classpath:db/mybatis/config.xml
+
+</code></pre></td></tr></table>
+</div>
+</div><p>运行容器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ docker run -p 8082:8080 -v J:/lean/spring-aop-redis-mysql/application.properties:/app/config/application.properties a7dad994b5b2
+</code></pre></td></tr></table>
+</div>
+</div><p>Docker运行Java程序</p>
+<p>Docker运行数据库</p>
+<p>Docker运行Redis</p>
+<p>Docker运行</p>
+<h3 id="nginx">Nginx</h3>
+<p>创建nginx容器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ docker run --restart=always -v J:/lean/spring-aop-redis-mysql/deploy/nginx.conf:/etc/nginx/nginx.conf:ro -p 80:80 -d nginx
+</code></pre></td></tr></table>
+</div>
+</div><p>[nginx官网] <a href="http://nginx.org/en/docs/http/load_balancing.html">http://nginx.org/en/docs/http/load_balancing.html</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">http {
+    upstream myapp1 {
+        server srv1.example.com;
+        server srv2.example.com;
+        server srv3.example.com;
+    }
+
+    server {
+        listen 80;
+
+        location / {
+            proxy_pass http://myapp1;
+        }
+    }
+}
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="查看咱用80端口的进程">查看咱用80端口的进程</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">netstat -aon | findstr &#34;80&#34;
+</code></pre></td></tr></table>
+</div>
+</div><p>查看对应进程的程序</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">tasklist | findstr &#34;4&#34;
+</code></pre></td></tr></table>
+</div>
+</div><p>删除对应进程</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">taskkill /pid 4 /F
+</code></pre></td></tr></table>
+</div>
+</div><p>查看占用80端口的服务</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">netsh http show servicestate
+</code></pre></td></tr></table>
+</div>
+</div>]]></description>
 </item><item>
     <title>Docker原理</title>
     <link>https://ryan-y-c.github.io/docker%E5%8E%9F%E7%90%86/</link>
     <pubDate>Fri, 22 Sep 2017 15:53:26 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/docker%E5%8E%9F%E7%90%86/</guid>
-    <description><![CDATA[]]></description>
+    <description><![CDATA[<h1 id="持续集成实战docker原理">持续集成实战：Docker原理</h1>
+<ul>
+<li>保证开发、测试、交付、部署的环境完全一致</li>
+<li>保证资源的隔离</li>
+<li>启动临时的、用完即弃的环境，例如测试</li>
+<li>迅速超大规模部署和扩容</li>
+</ul>
+<h2 id="docker的基本概念">Docker的基本概念</h2>
+<p>镜像（image）</p>
+<ul>
+<li>一个预先定义好的模板文件，Docker引擎可以按照这个模板文件启动无数个一摸一样的，互不干扰
+容器（container）</li>
+<li>一台虚拟的计算机，拥有独立的：
+<ul>
+<li>网络</li>
+<li>文件系统</li>
+<li>进程</li>
+</ul>
+</li>
+<li>默认和宿主机不发生任何交互
+<ul>
+<li>意味着数据是没有持久化的</li>
+</ul>
+</li>
+</ul>
+<p>it参数会启动docker交互式命令行模式，会显示报错信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -it mysql
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="docker-pullimages">docker pull/images</h2>
+<p>下载一个指定的镜像，方便随时启动</p>
+<p>docker pull mysql:5.7.28下载指定镜像</p>
+<ul>
+<li>如果不加tag（版本号）默认是latest（最新版本）</li>
+<li>registry.cn-beijing.aliyuncs.com/dr1/hcsp:0.0.16</li>
+<li>如果不加镜像仓管地址，默认在docker中央仓库获取镜像</li>
+</ul>
+<p>docker images 查看本地已有的镜像</p>
+<h2 id="docker-runps">docker run/ps</h2>
+<p>docker run 装载镜像成为一个容器、</p>
+<ul>
+<li>通过镜像模板创建出来一个镜像实例</li>
+<li>在这个容器看来，自己就是一台独立的计算机</li>
+<li>每个容器有一个ID。支持缩写</li>
+</ul>
+<p>docker run it &lt;镜像名&gt; &lt;镜像中要运行的命令和参数&gt;</p>
+<ul>
+<li>交互式命令行，当前shell中运行，Ctrl-C 退出</li>
+<li>启动并进入容器</li>
+</ul>
+<p>docker run -d &lt;镜像名&gt; &lt;镜像中要运行的命令和参数&gt;</p>
+<ul>
+<li>daemon模式，在后台运行</li>
+</ul>
+<h2 id="docker-run">docker run</h2>
+<p>&ndash;name 为容器指定一个名字</p>
+<p>&ndash;restart=always 遇到错误自动重启</p>
+<p>提供统一化软件化交互必不可少的功能</p>
+<p>-v &lt;本地容器&gt;:&lt;容器文件&gt;
+-p &lt;本地端口&gt;:&lt;容器端口&gt;
+-e name=value
+- 向容器传递初始化参数，例如设置root密码</p>
+<p>镜像名之前是docker参数，镜像名之后是镜像参数</p>
+<h2 id="docker-startstop">docker start/stop</h2>
+<p>启动/停止一个容器</p>
+<h2 id="docker-rm">docker rm</h2>
+<p>删除一个容器</p>
+<h1 id="docker-execexecute执行">docker exec（execute执行）</h1>
+<p>指定目标容器，进入容器执行命令</p>
+<ul>
+<li>docker run -it &lt;目标容器ID/名字&gt;&lt;目标命令（通常为bash）&gt;</li>
+<li>可以想象成ssh
+调试、解决问题必备命令</li>
+</ul>
+<h2 id="docker-logs">docker logs</h2>
+<p>docker logs &lt;容器ID或容器名&gt;</p>
+<ul>
+<li>查看目标容器的输出
+docker logs -f &lt;容器ID或容器名&gt;</li>
+<li>查看目标容器最后几行的输出</li>
+</ul>
+<h2 id="docker-inspect">docker inspect</h2>
+<p>查看容器的详细状态</p>
+<h2 id="docker分层镜像">docker分层镜像</h2>
+<p>ubuntu等镜像的基础镜像相同，在不同版本可以在新层增加功能。</p>
+<h3 id="dockerfile">Dockerfile</h3>
+<p>指定镜像如何生成</p>
+<p>编写第一个Dockerfile</p>
+<p>docker build .</p>
+<ul>
+<li>执行当前目录的Dockerfile文件</li>
+</ul>
+<p>每个镜像会有一个唯一的ID</p>
+<h3 id="docker的镜像仓库与tag">Docker的镜像仓库与tag</h3>
+<p>可以任意对镜像进行tag操作</p>
+<ul>
+<li>决定了未来这个镜像会被push到哪里</li>
+<li>决定了未来从哪里下载镜像
+可以方便的藏剑镜像仓库的私服</li>
+<li>&ndash; registry-mirror</li>
+<li>&ndash;insecure-registry
+<ul>
+<li>指定成http方式</li>
+</ul>
+</li>
+</ul>
+<h2 id="docker与kubernetes容器编排引擎">docker与kubernetes(容器编排引擎)</h2>
+<p>自动化容器编排引擎</p>
+<p>[练习run命令]https://github.com/hcsp/practise-docker-run</p>]]></description>
 </item><item>
     <title>正则表达式</title>
     <link>https://ryan-y-c.github.io/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</link>
     <pubDate>Mon, 18 Sep 2017 10:32:34 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</guid>
-    <description><![CDATA[]]></description>
+    <description><![CDATA[<h1 id="正则表达式更强大的通配符">正则表达式（更强大的通配符）</h1>
+<p>用于描述文本/字符串的一组规则</p>
+<ul>
+<li>处理文本</li>
+<li>提取信息</li>
+</ul>
+<p>java转义字符</p>
+<ul>
+<li>\n  \r \t \ \uXXXX</li>
+</ul>
+<h3 id="正则表达式的常用的元字符">正则表达式的常用的元字符</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><em>符号</em></th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">^</td>
+<td style="text-align:center">开始位置</td>
+</tr>
+<tr>
+<td style="text-align:center">$</td>
+<td style="text-align:center">结束位置</td>
+</tr>
+<tr>
+<td style="text-align:center">.</td>
+<td style="text-align:center">单个任意字符（不一定包含换号符）</td>
+</tr>
+<tr>
+<td style="text-align:center">?.</td>
+<td style="text-align:center">可以匹配换行符</td>
+</tr>
+<tr>
+<td style="text-align:center">\w</td>
+<td style="text-align:center">单个“word”字符 字⺟/数字/下划线/汉字</td>
+</tr>
+<tr>
+<td style="text-align:center">\s</td>
+<td style="text-align:center">单个空⽩字符（\n\r\t）</td>
+</tr>
+<tr>
+<td style="text-align:center">\d</td>
+<td style="text-align:center">单个数字字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\b</td>
+<td style="text-align:center">单词的开始或结束</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><em>符号</em></th>
+<th style="text-align:center">重复次数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">*</td>
+<td style="text-align:center">0次或多次</td>
+</tr>
+<tr>
+<td style="text-align:center">+</td>
+<td style="text-align:center">1次或多次</td>
+</tr>
+<tr>
+<td style="text-align:center">？</td>
+<td style="text-align:center">0次或1次</td>
+</tr>
+<tr>
+<td style="text-align:center">{n}</td>
+<td style="text-align:center">n次</td>
+</tr>
+<tr>
+<td style="text-align:center">{n,}</td>
+<td style="text-align:center">&gt;=n次</td>
+</tr>
+<tr>
+<td style="text-align:center">{n,m}</td>
+<td style="text-align:center">n到m次</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">符号</th>
+<th style="text-align:center">选择</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">[aeiou]</td>
+<td style="text-align:center">单个的a/e/i/o/u字符之⼀</td>
+</tr>
+<tr>
+<td style="text-align:center">[0-9]</td>
+<td style="text-align:center">单个数字字符</td>
+</tr>
+<tr>
+<td style="text-align:center">[A-Z]</td>
+<td style="text-align:center">单个⼤写字⺟</td>
+</tr>
+<tr>
+<td style="text-align:center">[A-Z0-9]</td>
+<td style="text-align:center">⼤写字⺟或者数字或者下划线</td>
+</tr>
+<tr>
+<td style="text-align:center">Hi |hi等价于[Hh]i</td>
+<td style="text-align:center">Hi或者hi</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">符号</th>
+<th style="text-align:center">反义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">[^aeiou]</td>
+<td style="text-align:center">单个的除a/e/i/o/u之外的字符</td>
+</tr>
+<tr>
+<td style="text-align:center">[^A]</td>
+<td style="text-align:center">单个⾮x字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\W</td>
+<td style="text-align:center">单个⾮\w（字⺟/数字/下划线/汉字）</td>
+</tr>
+<tr>
+<td style="text-align:center">\S</td>
+<td style="text-align:center">单个⾮\s（空⽩）</td>
+</tr>
+<tr>
+<td style="text-align:center">\D</td>
+<td style="text-align:center">单个⾮\d（数字）字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\B</td>
+<td style="text-align:center">⾮开头/结束位置</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><em>符号</em></th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">^\d{5,12}$</td>
+<td style="text-align:center">5到12位的数字</td>
+</tr>
+<tr>
+<td style="text-align:center">^(0|[1-9][0-9]*)$</td>
+<td style="text-align:center">0或者⾮零开头的数字</td>
+</tr>
+<tr>
+<td style="text-align:center">^(-?\d+)(.\d+)?$</td>
+<td style="text-align:center">⼩数</td>
+</tr>
+<tr>
+<td style="text-align:center">\n\s*\r</td>
+<td style="text-align:center">空⽩⾏</td>
+</tr>
+</tbody>
+</table>
+<h3 id="java中的正则表达式">Java中的正则表达式</h3>
+<p>String</p>
+<ul>
+<li>split() 正则表达式分割字符</li>
+<li>replaceAll/replaceFirst 替换字符</li>
+<li>matches 判断某个值是否匹配</li>
+</ul>
+<p>matches</p>
+<ul>
+<li>尽量少用或者少编译，因为效率低</li>
+<li>Java中的正则表达式是比较消耗资源的
+<ul>
+<li>正则表达式需要解析Pattern中的compile负责解析正则表达式</li>
+<li>匹配过程非常昂贵 匹配过程具有回溯过程</li>
+</ul>
+</li>
+</ul>
+<h3 id="分组与捕获">分组与捕获</h3>
+<p>想要将所有符合正则表达式的⽂本抓出来处理</p>
+<ul>
+<li>使⽤括号来指定⼀个被捕获的分组</li>
+<li>分组的编号从1开始</li>
+<li>分组的编号计算只看左括号</li>
+<li>(?:)不捕获和分配编号，括号只⽤于分组或标记优先级</li>
+</ul>
+<p>[实战] <a href="https://github.com/hcsp/regular-expression-in-action/pull/73">https://github.com/hcsp/regular-expression-in-action/pull/73</a></p>]]></description>
 </item><item>
     <title>Spring生态系统</title>
     <link>https://ryan-y-c.github.io/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F/</link>
     <pubDate>Mon, 11 Sep 2017 21:08:14 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/spring%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F/</guid>
-    <description><![CDATA[]]></description>
+    <description><![CDATA[<h1 id="spring生态系统">Spring生态系统</h1>
+<h2 id="bean配置与spring-mybatis实战">Bean配置与Spring MyBatis实战</h2>
+<p>0、在Spring容器中引入Bean</p>
+<p>1、 Spring+MyBatis（H2/MySQL/Postgres）</p>
+<p>2、模板引擎（后端渲染HTML）</p>
+<p>3、前后端分离和后端渲染</p>
+<p>Controller 做HTTP相关业务</p>
+<p>Service 做业务代码</p>
+<p>Dao 做数据库相关业务</p>
+<h3 id="在resourcesstatic-中的html页面可以在浏览器中获取">在resources/static 中的html页面可以在浏览器中获取</h3>
+<h3 id="模板引擎freemarker">模板引擎freemarker</h3>
+<p>[freemarker Springboot starter]http://zetcode.com/springboot/freemarker/
+[freemarker API]https://freemarker.apache.org/docs/ref_directive_list.html
+[SpringWeb]https://github.com/Ryan-Y-C/SpringDemo</p>
+<h1 id="动态代理aop与spring">动态代理、AOP与Spring</h1>
+<h2 id="动态代理与aop">动态代理与AOP</h2>
+<h3 id="aopaspect-oriented-programming-面向切面编程">AOP(Aspect-Oriented-Programming) 面向切面编程</h3>
+<ul>
+<li>相对于OOP（面向对象编程）</li>
+<li>AOP是面向切面编程，关注一个统一的切面</li>
+<li>AOP和Spring不是同一个东西</li>
+</ul>
+<h3 id="aop使用场景">AOP使用场景</h3>
+<p>需要统一处理的场景</p>
+<ul>
+<li>日志</li>
+<li>缓存</li>
+<li>鉴权
+OOP使用装饰器模式实现</li>
+<li>装饰器模式 Decorator pattern</li>
+<li>动态的为一个对象增加功能，但是不能改变其中结构</li>
+<li>本质是一个“包装”</li>
+</ul>
+<p>装饰器模式一般会声明一个接口，新功能继承这个接口在新的类中添加新功能</p>
+<h3 id="aop的两种实现方式jdk动态代理与字节码生成">AOP的两种实现方式：JDK动态代理与字节码生成</h3>
+<p>1、JDK动态代理</p>
+<ul>
+<li>
+<p>优点：方便，不需要依赖任何第三方库</p>
+</li>
+<li>
+<p>去点：只适用于接口</p>
+</li>
+</ul>
+<p>必须实现JDK的InvocationHandler接口，必须实现invoke方法，该方法为拦截方法。当调用代理类时候就会调用该方法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// 创建代理对象，并获取代理的对象实体的类加载器-&gt;拦截代理的接口-&gt;处理该对象的代理类
+//拦截已有方法的实现，实现AOP
+DataService ds= (DataService)Proxy.newProxyInstance(service.getClass().getClassLoader，new Class[]{DataService.Class },new LogProxy())
+</code></pre></td></tr></table>
+</div>
+</div><p>2、CGLIB/ByteBuddy字节码生成</p>
+<ul>
+<li>
+<p>优点：强大，不受接口限制</p>
+</li>
+<li>
+<p>缺点：需要引用额外的第三方类库</p>
+</li>
+<li>
+<p>不能增强final类和方法和private方法</p>
+</li>
+</ul>
+<p>引入CGLIB库</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="c">&lt;!-- https://mvnrepository.com/artifact/cglib/cglib --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>cglib<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cglib<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.2.2<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>实现CGLIBD的MethodInterceptor接口，实现该拦截方法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">DataServiceImpl service = new DataServiceImpl();
+Enhancer enhancer =new Enhancer();
+//设置实体方法DataServiceImpl为需要代理的实体类
+enhancer.setSuperclass(DataServiceImpl.class)
+//设置触发拦截时需要调用的类（需要执行拦截方法的类）
+enhancer.setCallBack(new LogInterceptpor(sservice)) 
+//新创建的类 类似于实体类的子类
+DataServiceImpl enhancedService = (DataServiceImpl) enhancer.create();
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="springboot中使用aop">SpringBoot中使用AOP</h3>
+<h4 id="aop与spring">AOP与Spring</h4>
+<p>在Spring中使用AOP实现Redis缓存</p>
+<p>@Aspect声明切面</p>
+<ul>
+<li>@Before
+<ul>
+<li>在方法执行前处理</li>
+</ul>
+</li>
+<li>After
+<ul>
+<li>在方法结束后进行处理</li>
+</ul>
+</li>
+<li>Around
+[SpringAOP]https://developer.ibm.com/zh/technologies/spring/articles/j-spring-boot-aop-web-log-processing-and-distributed-locking/
+[Spring官方文档]https://docs.spring.io/spring/docs/4.3.15.RELEASE/spring-framework-reference/html/aop.html
+[中文Blog]http://blog.didispace.com/springbootaoplog/
+引入SpringBootAOP依赖</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+     <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+     <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-aop<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>配置CGLIB切换CGLIB动态代理</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">spring.aop.proxy-target-class=true
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">//传达要拦截的方法即含有Cache注解的方法
+@Around(&#34;@annotation(SpringWeb.anno.Cache)&#34;)
+
+//获取被拦截的方法
+MethodSignature signature=(MethodSignature)joinPoint.getSignature();
+
+//joinPoint.proceed()执行被拦截的方法
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="redis">Redis</h3>
+<p>广泛使用的内存缓存</p>
+<p>常见的数据结构
+String/List/Set/ ZSet
+Redis</p>
+<ul>
+<li>完全基于内存</li>
+<li>优秀的数据结构设计</li>
+<li>单一线程，避免上下文切换</li>
+<li>事件驱动，非阻塞</li>
+<li>因为redis基于内存 所以多个JVM可以基于内存共享资源</li>
+</ul>
+<p>使用docker安装redis</p>
+<p>[官方文档]https://hub.docker.com/_/redis</p>
+<p>[docker关联redis]https://marcus116.blogspot.com/2019/02/how-to-run-redis-in-docker.html</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">docker pull redis
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -p 6379:6379 -d redis
+</code></pre></td></tr></table>
+</div>
+</div><p>配置Spring redis端口</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">spring.redis.host=localhost
+spring.redis.port=6379
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-data-redis<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>将java对象传递给redis,java对象（User等）实现Serializable接口实现可序列化</p>
+<p>创建docker mysql</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"> docker run --name mysql -e MYSQL_ROOT_PASSWORD=123456 -e MYSQL_DATABASE=mall -p 3306:3306 -d mysql:8.0.18 --lower_case_table_names=1
+</code></pre></td></tr></table>
+</div>
+</div><p>[Spring AOP Redis Mysql实战]https://github.com/hcsp/spring-aop-redis-mysql/pull/60</p>]]></description>
 </item><item>
     <title>SpringWeb</title>
     <link>https://ryan-y-c.github.io/springweb/</link>
     <pubDate>Mon, 11 Sep 2017 11:32:42 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/springweb/</guid>
-    <description><![CDATA[SpringWeb]]></description>
+    <description><![CDATA[<h1 id="spring-web应用">Spring Web应用</h1>
+<p>##从零开始一个Spring应用</p>
+<p>pom.xml</p>
+<ul>
+<li>[创建pom.xml]https://spring.io/guides/gs/spring-boot/</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+<span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">&#34;http://maven.apache.org/POM/4.0.0&#34;</span> <span class="na">xmlns:xsi=</span><span class="s">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
+	<span class="na">xsi:schemaLocation=</span><span class="s">&#34;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&#34;</span><span class="nt">&gt;</span>
+	<span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+	<span class="nt">&lt;parent&gt;</span>
+		<span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+		<span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-parent<span class="nt">&lt;/artifactId&gt;</span>
+		<span class="nt">&lt;version&gt;</span>2.3.2.RELEASE<span class="nt">&lt;/version&gt;</span>
+		<span class="nt">&lt;relativePath/&gt;</span> <span class="c">&lt;!-- lookup parent from repository --&gt;</span>
+	<span class="nt">&lt;/parent&gt;</span>
+	<span class="nt">&lt;groupId&gt;</span>com.example<span class="nt">&lt;/groupId&gt;</span>
+	<span class="nt">&lt;artifactId&gt;</span>spring-boot<span class="nt">&lt;/artifactId&gt;</span>
+	<span class="nt">&lt;version&gt;</span>0.0.1-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+	<span class="nt">&lt;name&gt;</span>spring-boot<span class="nt">&lt;/name&gt;</span>
+	<span class="nt">&lt;description&gt;</span>Demo project for Spring Boot<span class="nt">&lt;/description&gt;</span>
+
+	<span class="nt">&lt;properties&gt;</span>
+		<span class="nt">&lt;java.version&gt;</span>1.8<span class="nt">&lt;/java.version&gt;</span>
+	<span class="nt">&lt;/properties&gt;</span>
+
+	<span class="nt">&lt;dependencies&gt;</span>
+		<span class="nt">&lt;dependency&gt;</span>
+			<span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+			<span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="nt">&lt;/artifactId&gt;</span>
+		<span class="nt">&lt;/dependency&gt;</span>
+
+		<span class="nt">&lt;dependency&gt;</span>
+			<span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+			<span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-test<span class="nt">&lt;/artifactId&gt;</span>
+			<span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+			<span class="nt">&lt;exclusions&gt;</span>
+				<span class="nt">&lt;exclusion&gt;</span>
+					<span class="nt">&lt;groupId&gt;</span>org.junit.vintage<span class="nt">&lt;/groupId&gt;</span>
+					<span class="nt">&lt;artifactId&gt;</span>junit-vintage-engine<span class="nt">&lt;/artifactId&gt;</span>
+				<span class="nt">&lt;/exclusion&gt;</span>
+			<span class="nt">&lt;/exclusions&gt;</span>
+		<span class="nt">&lt;/dependency&gt;</span>
+	<span class="nt">&lt;/dependencies&gt;</span>
+
+	<span class="nt">&lt;build&gt;</span>
+		<span class="nt">&lt;plugins&gt;</span>
+			<span class="nt">&lt;plugin&gt;</span>
+				<span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+				<span class="nt">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+			<span class="nt">&lt;/plugin&gt;</span>
+		<span class="nt">&lt;/plugins&gt;</span>
+	<span class="nt">&lt;/build&gt;</span>
+
+<span class="nt">&lt;/project&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>src/main/java/hello/Application.java</p>
+<p>src/main/java/hello/HelloController.java</p>
+<h2 id="web应用的本质">Web应用的本质</h2>
+<p>处理HTTP请求</p>
+<ul>
+<li>从HTTP请求中提取query string(查询字符串)</li>
+<li>从HTTP请求中提取payload（负载）body中的参数
+返回HTTP响应</li>
+<li>status code</li>
+<li>HTTP response header</li>
+<li>HTTP response body
+<ul>
+<li>JSON</li>
+<li>HTML</li>
+</ul>
+</li>
+</ul>
+<h3 id="http-get请求">HTTP GET请求</h3>
+<p>Query String</p>
+<ul>
+<li>?param1=value1&amp;param2=value2</li>
+</ul>
+<p>通常用来传递非敏感信息</p>
+<p>使用@RequsetParam进行接受</p>
+<h3 id="restful-api设计api的约定">RESTful API（设计API的约定）</h3>
+<p>使用HTTP动词来代表动作</p>
+<ul>
+<li>GET：获取资源</li>
+<li>POST:新建资源</li>
+<li>PUT：更新资源</li>
+<li>DELETE：删除资源</li>
+</ul>
+<p>使用URL（名词）来代表资源</p>
+<ul>
+<li>资源里没有动词</li>
+<li>使用复数来代表资源列表</li>
+</ul>
+<h3 id="restcontroller">@RestController</h3>
+<p>使用RESTful风格的参数</p>
+<ul>
+<li>使用@PathVariable进行参数提取</li>
+</ul>
+<h3 id="postmapping">PostMapping</h3>
+<p>处理POST请求
+从HTTP POST请求提取body</p>
+<h3 id="json转class文件工具">json转class文件工具</h3>
+<p>idea工具：GsonFormat</p>
+<h3 id="生成http请求">生成HTTP请求</h3>
+<p>直接生成HttpServletResponse对象</p>
+<ul>
+<li>原始、简单
+直接返回HTML字符串</li>
+</ul>
+<p>返回对象，并自动格式化成JSON</p>
+<ul>
+<li>
+<p>常用</p>
+</li>
+<li>
+<p>@ResponseBody</p>
+</li>
+</ul>
+<p>模板引擎渲染</p>
+<ul>
+<li>JSP/Velocity/Freemarker</li>
+</ul>
+<h3 id="servlet-转换器">servlet-转换器</h3>
+<p>将字节流转换成java对象</p>
+<p>将java对象转换成字节流</p>
+<h3 id="周边生态系统">周边生态系统</h3>
+<p>HTTPS</p>
+<p>分布式部署</p>
+<p>扩展功能</p>
+<ul>
+<li>数据库</li>
+<li>Redis缓存</li>
+<li>信息队列</li>
+<li>RPC(Dubbo/Spring Cloud)</li>
+<li>微服务化</li>
+</ul>]]></description>
 </item><item>
     <title>Spring</title>
     <link>https://ryan-y-c.github.io/spring/</link>
     <pubDate>Sat, 09 Sep 2017 21:55:35 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/spring/</guid>
-    <description><![CDATA[Spring]]></description>
+    <description><![CDATA[<h1 id="spring-ioc容器原理与手写简单实现">Spring IoC容器原理与手写简单实现</h1>
+<h2 id="spring-容器的原理">Spring 容器的原理</h2>
+<h3 id="spring">Spring</h3>
+<p>java世界应用的事实标准</p>
+<p>Spring容器-一个IoC容器</p>
+<ul>
+<li>自动化管理对象的容器</li>
+</ul>
+<p>Spring MVC-基于Spring和Servlet的Web应用框架</p>
+<p>Spring Boot - 集成度和自动化程度更高</p>
+<h3 id="spring-容器的核心概念">Spring 容器的核心概念</h3>
+<p>Bean</p>
+<ul>
+<li>容器中的最小工作单元，通常为一个Java对象
+BeanFactory/ApplicationContext</li>
+<li>容器本身对应的Java对象
+依赖注入（DI）Dependence Injection</li>
+<li>容器负责注入所有的依赖
+控制反转（IoC）Inverse of Control</li>
+<li>用户将控制权交给了容器</li>
+</ul>
+<h3 id="简单实现spring">简单实现Spring</h3>
+<p>定义Bean</p>
+<p>加载Bean的定义</p>
+<p>实例化Bean</p>
+<p>查找依赖，实现自动化注入</p>
+<h3 id="spring的实现">Spring的实现</h3>
+<p>在XML里面定义Bean</p>
+<p>BeanDefinition的载入和解析</p>
+<p>Bean的实例化和依赖注入</p>
+<p>对外提供服务</p>
+<p>[简单实现ioc容器]https://github.com/hcsp/simple-ioc-container/pull/81</p>]]></description>
 </item><item>
     <title>MyBatis</title>
     <link>https://ryan-y-c.github.io/mybatis/</link>
     <pubDate>Sat, 02 Sep 2017 18:18:25 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/mybatis/</guid>
-    <description><![CDATA[MyBatis]]></description>
+    <description><![CDATA[<h1 id="mybatis---orm框架">MyBatis - ORM框架</h1>
+<h2 id="ormobject-relationship-mapping">ORM(Object Relationship Mapping)</h2>
+<p>对象关系映射</p>
+<ul>
+<li>自动完成对象到数据库的映射
+Association</li>
+<li>自动装配对象</li>
+</ul>
+<h2 id="mybatis">MyBatis</h2>
+<p>[MyBatis入门] <a href="https://mybatis.org/mybatis-3/zh/getting-started.html">https://mybatis.org/mybatis-3/zh/getting-started.html</a></p>
+<p>1、引入Maven依赖</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.mybatis<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>mybatis<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.5.5<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>2、创建MyBatis文件夹及其配置文件</p>
+<ul>
+<li>文件路径：main/resources/db/mybatis/config.xml</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34; ?&gt;</span>
+<span class="cp">&lt;!DOCTYPE configuration
+</span><span class="cp">  PUBLIC &#34;-//mybatis.org//DTD Config 3.0//EN&#34;
+</span><span class="cp">  &#34;http://mybatis.org/dtd/mybatis-3-config.dtd&#34;&gt;</span>
+<span class="nt">&lt;configuration&gt;</span>
+  <span class="nt">&lt;environments</span> <span class="na">default=</span><span class="s">&#34;development&#34;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;environment</span> <span class="na">id=</span><span class="s">&#34;development&#34;</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!-- dataSource链接池--&gt;</span>
+      <span class="nt">&lt;transactionManager</span> <span class="na">type=</span><span class="s">&#34;JDBC&#34;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;dataSource</span> <span class="na">type=</span><span class="s">&#34;POOLED&#34;</span><span class="nt">&gt;</span>
+      <span class="c">&lt;!--driver 设置数据库驱动 --&gt;</span>
+        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&#34;driver&#34;</span> <span class="na">value=</span><span class="s">&#34;${driver}&#34;</span><span class="nt">/&gt;</span>
+        <span class="c">&lt;!-- 连接串 --&gt;</span>
+        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&#34;url&#34;</span> <span class="na">value=</span><span class="s">&#34;${url}&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&#34;username&#34;</span> <span class="na">value=</span><span class="s">&#34;${username}&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&#34;password&#34;</span> <span class="na">value=</span><span class="s">&#34;${password}&#34;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/dataSource&gt;</span>
+    <span class="nt">&lt;/environment&gt;</span>
+  <span class="nt">&lt;/environments&gt;</span>
+  <span class="nt">&lt;mappers&gt;</span>
+    <span class="nt">&lt;mapper</span> <span class="na">resource=</span><span class="s">&#34;org/mybatis/example/BlogMapper.xml&#34;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/mappers&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>3、创建SqlSessionFactory对象</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">String resource = &#34;db/mybatis/config.xml&#34;;
+InputStream inputStream = Resources.getResourceAsStream(resource);
+SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+</code></pre></td></tr></table>
+</div>
+</div><p>4、通过接口和注解调用Mybatis进行数据库操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="c">&lt;!-- 在配置文件中 进行配置后使用注解 class中填入接口全限定类名 或者别名 --&gt;</span>
+<span class="nt">&lt;mapper</span> <span class="na">class=</span><span class="s">&#34;my.package.com.MyClass&#34;</span><span class="nt">&gt;&lt;/mapper&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">interface</span> <span class="nc">UserMapper</span><span class="o">{</span>
+    <span class="nd">@Select</span><span class="o">(</span><span class="s">&#34;select * from user&#34;</span><span class="o">)</span>
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">getUsers</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">String resource = &#34;db/mybatis/config.xml&#34;;
+InputStream inputStream = Resources.getResourceAsStream(resource);
+SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+try(SqlSession session = sqlSessionFactory.openSession()){
+    UserMapper mapper = session.getMapper(UserMapper.Class)
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>原理：</p>
+<ul>
+<li>使用代理模式通过反射和注解创建了一个UserMapper实现</li>
+</ul>
+<h2 id="配置日志">配置日志</h2>
+<p>[配置MyBatis日志]https://mybatis.org/mybatis-3/zh/logging.html</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml">  <span class="nt">&lt;settings&gt;</span>
+    <span class="nt">&lt;setting</span> <span class="na">name=</span><span class="s">&#34;logImpl&#34;</span> <span class="na">value=</span><span class="s">&#34;LOG4J&#34;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/settings&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>配置日志Maven依赖</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>log4j<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>log4j<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.2.17<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>创建log4j.properties文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"># 全局日志配置 rootlogger日志等级 DEBUG
+log4j.rootLogger=ERROR, stdout
+# MyBatis 日志配置
+log4j.logger.org.mybatis.example.BlogMapper=TRACE
+# 控制台输出
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%5p [%t] - %m%n
+</code></pre></td></tr></table>
+</div>
+</div><p>首先配置日志框架，提高问题排查效率</p>
+<p>配置数据源</p>
+<p>Mapper:接口由MyBatis动态代理(注解方式)</p>
+<ul>
+<li>优点：方便</li>
+<li>缺点：SQL复杂的时候不方便</li>
+</ul>
+<p>Mapper:用xml编写复杂的SQL</p>
+<ul>
+<li>优点：可以方便使用MyBatis的强大功能</li>
+<li>缺点：SQL和代码分离</li>
+</ul>
+<p>创建Mapper.xml文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34; ?&gt;</span>
+<span class="cp">&lt;!DOCTYPE mapper
+</span><span class="cp">  PUBLIC &#34;-//mybatis.org//DTD Mapper 3.0//EN&#34;
+</span><span class="cp">  &#34;http://mybatis.org/dtd/mybatis-3-mapper.dtd&#34;&gt;</span>
+<span class="nt">&lt;mapper</span> <span class="na">namespace=</span><span class="s">&#34;org.mybatis.example.BlogMapper&#34;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&#34;selectBlog&#34;</span> <span class="na">resultType=</span><span class="s">&#34;Blog&#34;</span><span class="nt">&gt;</span>
+    select * from Blog where id = #{id}
+  <span class="nt">&lt;/select&gt;</span>
+<span class="nt">&lt;/mapper&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>调用Mapper.xml中的sql语句</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">String resource = &#34;db/mybatis/config.xml&#34;;
+InputStream inputStream = Resources.getResourceAsStream(resource);
+SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+try(SqlSession session = sqlSessionFactory.openSession()){
+    UserMapper mapper = session.slectList(配置文件路径和sql语句名字)
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>MyBatis参数</p>
+<p>parameterType</p>
+<ul>
+<li>参数的#{}和${}
+<ul>
+<li>_#{}以sql方式替换参数 防止sql注入</li>
+<li>${}直接替换对应的参数</li>
+</ul>
+</li>
+<li>参数是按照JavaBean约定读取的</li>
+</ul>
+<p>resultType</p>
+<ul>
+<li>typeAlias
+<ul>
+<li>$区分内部类的分割符</li>
+<li>设置别名（类似类的引用）</li>
+</ul>
+</li>
+<li>写参照是按照JavaBean约定的</li>
+</ul>
+<p>&ndash; #{id}查找传入对象对应为id的属性（该对象遵循JavaBean约定）可以用Map取代临时的对象</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34; ?&gt;</span>
+<span class="cp">&lt;!DOCTYPE mapper
+</span><span class="cp">  PUBLIC &#34;-//mybatis.org//DTD Mapper 3.0//EN&#34;
+</span><span class="cp">  &#34;http://mybatis.org/dtd/mybatis-3-mapper.dtd&#34;&gt;</span>
+<span class="nt">&lt;mapper</span> <span class="na">namespace=</span><span class="s">&#34;org.mybatis.example.BlogMapper&#34;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&#34;selectBlog&#34;</span> <span class="na">resultType=</span><span class="s">&#34;Blog&#34;</span><span class="nt">&gt;</span>
+    select * from Blog where id = #{id}
+  <span class="nt">&lt;/select&gt;</span>
+<span class="nt">&lt;/mapper&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Association</p>
+<p>Map与key = 属性，value=值</p>
+<h2 id="mybatis动态sql">MyBatis动态SQL</h2>
+<p>通过传入的参数动态决定执行的sql语句</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&#34;findActiveBlogWithTitleLike&#34;</span>
+     <span class="na">resultType=</span><span class="s">&#34;Blog&#34;</span><span class="nt">&gt;</span>
+  SELECT * FROM BLOG
+  WHERE state = ‘ACTIVE’
+  <span class="nt">&lt;if</span> <span class="na">test=</span><span class="s">&#34;title != null&#34;</span><span class="nt">&gt;</span>
+    AND title like #{title}
+  <span class="nt">&lt;/if&gt;</span>
+<span class="nt">&lt;/select&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>foreach语句</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&#34;selectPostIn&#34;</span> <span class="na">resultType=</span><span class="s">&#34;domain.blog.Post&#34;</span><span class="nt">&gt;</span>
+  SELECT *
+  FROM POST P
+  WHERE ID in
+  <span class="nt">&lt;foreach</span> <span class="na">item=</span><span class="s">&#34;item&#34;</span> <span class="na">index=</span><span class="s">&#34;index&#34;</span> <span class="na">collection=</span><span class="s">&#34;list&#34;</span>
+      <span class="na">open=</span><span class="s">&#34;(&#34;</span> <span class="na">separator=</span><span class="s">&#34;,&#34;</span> <span class="na">close=</span><span class="s">&#34;)&#34;</span><span class="nt">&gt;</span>
+        #{item}
+  <span class="nt">&lt;/foreach&gt;</span>
+<span class="nt">&lt;/select&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div>]]></description>
 </item><item>
     <title>注解</title>
     <link>https://ryan-y-c.github.io/%E6%B3%A8%E8%A7%A3/</link>
     <pubDate>Thu, 31 Aug 2017 18:39:32 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/%E6%B3%A8%E8%A7%A3/</guid>
-    <description><![CDATA[注解]]></description>
+    <description><![CDATA[<h1 id="注解">注解</h1>
+<h2 id="什么是注解">什么是注解</h2>
+<p>Class</p>
+<ul>
+<li>Class是Java类的说明书</li>
+<li>通过反射或阅读说明书创建类的实例</li>
+</ul>
+<p>Annotation注解就是说明书(Class文件上携带信息)的一段信息/文本/标记</p>
+<ul>
+<li>可以携带参数</li>
+<li>可以在运行时被阅读</li>
+</ul>
+<h2 id="注解的写法">注解的写法</h2>
+<p>新建一个类的时候选择注解</p>
+<p>元注解(可以在放在注解上面的注解)</p>
+<ul>
+<li>@Retention
+<ul>
+<li>当前注解编译后保留等级（选项）</li>
+</ul>
+</li>
+<li>@Target
+<ul>
+<li>限制当前注解在什么位置可以使用(类/方法/属性)</li>
+</ul>
+</li>
+<li>@Documented</li>
+<li>@Inherited</li>
+<li>@Repeatable</li>
+</ul>
+<h2 id="注解属性">注解属性</h2>
+<p>基本数据类型+String+类及其他们的数组</p>
+<p>默认值</p>
+<p>名为value的属性</p>
+<h2 id="jdk的自带注解">JDK的自带注解</h2>
+<p>@Deprecated //废弃的方法</p>
+<p>@Override //子类覆盖父类方法</p>
+<p>@SuppressWarning //忽略检查</p>
+<p>@FunctionalInterface //函数式标记接口</p>
+<h2 id="bytebuddy">ByteBuddy</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>net.bytebuddy<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>byte-buddy<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>1.10.1<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;scope&gt;</span>compile<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="基于注解的缓存装饰器">基于注解的缓存装饰器</h2>
+<p><a href="https://github.com/hcsp/annotation-based-cache-decorator/pull/88" target="_blank" rel="noopener noreffer">基于注解的缓存装饰器</a></p>]]></description>
 </item><item>
     <title>Markdown 基本语法预览</title>
     <link>https://ryan-y-c.github.io/basic-markdown-preview/</link>
@@ -67,13 +1571,1565 @@
     <guid>https://ryan-y-c.github.io/basic-markdown-preview/</guid>
     <description><![CDATA[<p>这是一篇用于预览 <i class="fab fa-markdown"></i>&nbsp;Markdown 基本语法的文章。</p>
 <p>文章内容基于 <a href="https://github.github.com/gfm" target="_blank" rel="noopener noreffer">GitHub Flavo红色 Markdown Spec</a>。</p>
-<p>不包含复杂的规则说明，仅仅展示 GFM 所约定的 Markdown 基本语法。</p>]]></description>
+<p>不包含复杂的规则说明，仅仅展示 GFM 所约定的 Markdown 基本语法。</p>
+<h2 id="1-引言">1 引言</h2>
+<p><i class="fab fa-markdown"></i>&nbsp;<strong>Markdown</strong> 是一种用于编写结构化文档的纯文本格式。它基于电子邮件和论坛文章的格式所约定。
+它由 John Gruber (在 Aaron Swartz 的帮助下)开发，于 2004 年以语法描述和用于将 Markdown 转换为 HTML 的 Perl 脚本(Markdown.pl)的形式发布。</p>
+<p>在接下来的十年中，许多实现被开发出来。一些用脚注、表和其他文档元素的约定扩展了原始 Markdown 语法。
+有些允许 Markdown 文档以 HTML 以外的格式呈现。 像 红色dit，StackOverflow 和 GitHub 这样的网站有上百万的用户在使用 Markdown。
+Markdown 开始被应用于网络以外的领域，包括作者书籍、文章、幻灯片、信件和课堂笔记。</p>
+<h2 id="2-块和内联元素">2 块和内联元素</h2>
+<p>我们可以把一个文档看成一系列的块，如段落、引用、列表、标题和代码块。</p>
+<p>有些块(如引号和列表)可以包含其它的块，即 <strong>容器块</strong>；
+其他的块(如标题和段落)则包含内联元素(如文本、链接、强调、图像、内联代码等)，即 <strong>叶子块</strong>。</p>
+<p>块的符号总是优先于内联元素的符号。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown"><span class="k">-</span> `one
+<span class="k">-</span> two`
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>`one</li>
+<li>two`</li>
+</ul>
+<h2 id="3-叶子块">3 叶子块</h2>
+<p>本节描述用于组成 Markdown 文档的不同类型的叶子块。</p>
+<h3 id="31-换行符">3.1 换行符</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown">***
+------
+  <span class="gs">____</span>
+</code></pre></td></tr></table>
+</div>
+</div><hr>
+<hr>
+<hr>
+<h3 id="32-标题">3.2 标题</h3>
+<div class="details admonition note open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-pencil-alt fa-fw"></i>关于 ATX 风格标题和 Setext 风格标题<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><p>本文只展示 ATX 风格标题，关于 Setext 风格标题的介绍请参考 <a href="https://github.github.com/gfm/#setext-heading" target="_blank" rel="noopener noreffer">GFM Setext headings 说明</a>。</p>
+<p>笔者不推荐在 Hugo 的 Markdown 文档中使用 Setext 风格标题。</p>
+</div>
+        </div>
+    </div>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown"><span class="gu">## H2 二级标题
+</span><span class="gu">### H3 三级标题
+</span><span class="gu">#### H4 四级标题
+</span><span class="gu">##### H5 五级标题
+</span><span class="gu">###### H6 六级标题
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="h2-二级标题">H2 二级标题</h2>
+<h3 id="h3-三级标题">H3 三级标题</h3>
+<h4 id="h4-四级标题">H4 四级标题</h4>
+<h5 id="h5-五级标题">H5 五级标题</h5>
+<h6 id="h6-六级标题">H6 六级标题</h6>
+<h3 id="33-代码块">3.3 代码块</h3>
+<div class="details admonition note open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-pencil-alt fa-fw"></i>关于缩进式代码块和围栏式代码块<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><p>本文只展示围栏式代码块，关于缩进式代码块的介绍请参考 <a href="https://github.github.com/gfm/#indented-code-block" target="_blank" rel="noopener noreffer">GFM Indented code blocks 说明</a>。</p>
+<p>笔者不推荐在 Hugo 的 Markdown 文档中使用缩进式代码块。</p>
+</div>
+        </div>
+    </div>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown"><span class="s">```
+</span><span class="s"></span>foo()
+<span class="s">```</span>
+
+~~~
+foo()
+~~~
+
+````
+foo()
+````
+
+<span class="s">```ruby
+</span><span class="s"></span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="k">return</span> <span class="mi">3</span>
+<span class="k">end</span>
+<span class="s">```</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">foo()
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">foo()
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">foo()
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="k">return</span> <span class="mi">3</span>
+<span class="k">end</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="hl"><span class="lnt">22
+</span></span><span class="lnt">23
+</span><span class="hl"><span class="lnt">24
+</span></span><span class="hl"><span class="lnt">25
+</span></span><span class="hl"><span class="lnt">26
+</span></span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="hl"><span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+</span>
+<span class="hl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="hl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Hello, 世界&#34;</span><span class="p">)</span>
+</span><span class="hl"><span class="p">}</span>
+</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="34-段落">3.4 段落</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown">这是一个段落。
+这还是之前段落的一部分。
+
+这是新的段落。
+</code></pre></td></tr></table>
+</div>
+</div><p>这是一个段落。
+这还是之前段落的一部分。</p>
+<p>这是新的段落。</p>
+<h3 id="35-引用链接的定义">3.5 引用链接的定义</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown">[foo]: /url &#34;title&#34;
+
+[foo]
+
+[bar]: /url
+
+[bar]
+</code></pre></td></tr></table>
+</div>
+</div><p><a href="/url" title="title" rel="">foo</a></p>
+<p><a href="/url" rel="">bar</a></p>
+<h3 id="36-空白行">3.6 空白行</h3>
+<p>块之间的空白行将被忽略，除了它们在确定列表是紧还是松时所起的作用。</p>
+<p>文档开头和结尾的空行也会被忽略。</p>
+<h2 id="4-容器块">4 容器块</h2>
+<h3 id="41-引用">4.1 引用</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown"><span class="k">&gt; </span><span class="ge">Foo
+</span><span class="ge"></span><span class="k">&gt;
+</span><span class="k"></span><span class="ge">&gt; - **bar**
+</span><span class="ge"></span><span class="k">&gt; </span><span class="ge">- baz
+</span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>Foo</p>
+<ul>
+<li><strong>bar</strong></li>
+<li>baz</li>
+</ul>
+</blockquote>
+<h3 id="42-无序列表">4.2 无序列表</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown"><span class="k">-</span> 项目 1
+    <span class="k">*</span> 项目 A
+    <span class="k">-</span> 项目 B
+        一些说明
+        + 项目 a
+        <span class="k">*</span> 项目 b
+        <span class="k">-</span> 项目 c
+    + 项目 C
++ 项目 2
+<span class="k">*</span> 项目 3
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>项目 1
+<ul>
+<li>项目 A</li>
+</ul>
+<ul>
+<li>项目 B
+一些说明
+<ul>
+<li>项目 a</li>
+</ul>
+<ul>
+<li>项目 b</li>
+</ul>
+<ul>
+<li>项目 c</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>项目 C</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>项目 2</li>
+</ul>
+<ul>
+<li>项目 3</li>
+</ul>
+<h3 id="43-有序列表">4.3 有序列表</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown"><span class="k">1.</span> 项目 1
+    <span class="k">1.</span> 项目 A
+    <span class="k">2.</span> 项目 B
+        一些说明
+        <span class="k">1.</span> 项目 a
+        <span class="k">2.</span> 项目 b
+        <span class="k">3.</span> 项目 c
+    <span class="k">3.</span> 项目 C
+<span class="k">2.</span> 项目 2
+<span class="k">3.</span> 项目 3
+</code></pre></td></tr></table>
+</div>
+</div><ol>
+<li>项目 1
+<ol>
+<li>项目 A</li>
+<li>项目 B
+一些说明
+<ol>
+<li>项目 a</li>
+<li>项目 b</li>
+<li>项目 c</li>
+</ol>
+</li>
+<li>项目 C</li>
+</ol>
+</li>
+<li>项目 2</li>
+<li>项目 3</li>
+</ol>
+<h3 id="44-任务列表">4.4 任务列表</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown"><span class="k">- [ ]</span> 任务 1
+    <span class="k">* [X]</span> 任务 A
+    <span class="k">-</span> 任务 B
+        + [ ] 任务 a
+        <span class="k">* [ ]</span> 任务 b
+        <span class="k">- [X]</span> 任务 c
+    + [X] 任务 C
++ [ ] 任务 2
+<span class="k">* [X]</span> 任务 3
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><i class="far fa-square fa-fw"></i> 任务 1
+<ul>
+<li><i class="far fa-check-square fa-fw"></i> 任务 A</li>
+</ul>
+<ul>
+<li>任务 B
+<ul>
+<li><i class="far fa-square fa-fw"></i> 任务 a</li>
+</ul>
+<ul>
+<li><i class="far fa-square fa-fw"></i> 任务 b</li>
+</ul>
+<ul>
+<li><i class="far fa-check-square fa-fw"></i> 任务 c</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><i class="far fa-check-square fa-fw"></i> 任务 C</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><i class="far fa-square fa-fw"></i> 任务 2</li>
+</ul>
+<ul>
+<li><i class="far fa-check-square fa-fw"></i> 任务 3</li>
+</ul>
+<h3 id="45-表格">4.5 表格</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown">| <span class="ge">_颜色_</span>      | 水果          | 蔬菜         |
+| ----------  |:---------------:| -----------:|
+| 红色           | <span class="ge">*苹果*</span>         | 辣椒      |
+| <span class="gd">~~橙色~~</span>    | 橘子         | <span class="gs">**胡萝卜**</span>        |
+| 绿色         | <span class="gd">~~***梨子***~~</span> | 菠菜           |
+</code></pre></td></tr></table>
+</div>
+</div><table>
+<thead>
+<tr>
+<th><em>颜色</em></th>
+<th style="text-align:center">水果</th>
+<th style="text-align:right">蔬菜</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>红色</td>
+<td style="text-align:center"><em>苹果</em></td>
+<td style="text-align:right">辣椒</td>
+</tr>
+<tr>
+<td><del>橙色</del></td>
+<td style="text-align:center">橘子</td>
+<td style="text-align:right"><strong>胡萝卜</strong></td>
+</tr>
+<tr>
+<td>绿色</td>
+<td style="text-align:center"><del><em><strong>梨子</strong></em></del></td>
+<td style="text-align:right">菠菜</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-页内锚">3. 页内锚</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown">[<span class="nt">脚注</span>](<span class="na">#footnote</span>)
+
+<span class="gu">## 4. 脚注 {#footnote}
+</span></code></pre></td></tr></table>
+</div>
+</div><p><a href="#footnote" rel="">脚注</a></p>
+<h2 id="footnote">4. 脚注</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown">这是一个基本的数字脚注[^1]
+
+带有 &#34;label&#34; 标签的脚注[^label]
+
+下定义的脚注[^!DEF]
+
+带有链接的脚注[^pa]
+
+[^1]: 这是一个基本的数字脚注
+[^label]: 带有 &#34;label&#34; 标签的脚注
+[^pa]: [<span class="nt">LoveIt 主题</span>](<span class="na">https://github.com/dillonzq/LoveIt</span>)
+[^!DEF]: 下定义的脚注
+</code></pre></td></tr></table>
+</div>
+</div><p>这是一个基本的数字脚注<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>带有 &ldquo;label&rdquo; 标签的脚注<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>下定义的脚注<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<p>带有链接的脚注<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
+<h2 id="5-内联格式">5. 内联格式</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown"><span class="sb">`内联代码块`</span>
+
+<span class="p">&lt;</span><span class="nt">kbd</span><span class="p">&gt;</span>ctrl<span class="p">&lt;/</span><span class="nt">kbd</span><span class="p">&gt;</span>+<span class="p">&lt;</span><span class="nt">kbd</span><span class="p">&gt;</span>alt<span class="p">&lt;/</span><span class="nt">kbd</span><span class="p">&gt;</span>+<span class="p">&lt;</span><span class="nt">kbd</span><span class="p">&gt;</span>del<span class="p">&lt;/</span><span class="nt">kbd</span><span class="p">&gt;</span>
+
+<span class="gs">**加粗 1**</span> 和 <span class="gs">__加粗 2__</span>
+
+<span class="ge">*倾斜 1*</span>  和 <span class="ge">_倾斜 2_</span>
+
+<span class="gd">~~删除线~~</span>
+
+<span class="gs">***加粗 1 和 倾斜 1**</span>*
+
+<span class="gs">___加粗 2 和 倾斜 2___</span>
+
+<span class="gs">__*加粗 2 和 倾斜 1*__</span>
+
+<span class="gs">**_加粗 1 和 倾斜 2_**</span>
+
+<span class="gd">~~*删除线 倾斜 1*~~</span> 和 <span class="ge">*~~删除线 倾斜 2~~*</span>
+
+<span class="gd">~~_删除线 倾斜 2_~~</span> 和  <span class="ge">_~~删除线 倾斜 2~~_</span>
+
+<span class="gd">~~**删除线 加粗 1**~~</span> 和 <span class="gs">**~~删除线 加粗 1~~**</span>
+
+<span class="gd">~~__删除线 加粗 2__~~</span> 和 <span class="gs">__~~删除线 加粗 2~~__</span>
+
+<span class="gd">~~***删除线 倾斜 1 加粗 1***~~</span> 和 <span class="gs">***~~删除线 倾斜 1 加粗 1~~**</span>*
+
+<span class="gd">~~___删除线 倾斜 2 加粗 2___~~</span> 和 <span class="gs">___~~删除线 倾斜 2 加粗 2~~___</span>
+
+<span class="gs">**~~*删除线 倾斜 1 加粗 1*~~**</span> 和 <span class="ge">*~~*</span>*删除线 倾斜 1 加粗 1**~~*
+
+<span class="gs">__~~_删除线 倾斜 2 加粗 2_~~__</span> 和 _~~__删除线 倾斜 2 加粗 2__~~_
+
+<span class="gs">**~~_删除线 倾斜 2 加粗 1_~~**</span> 和 <span class="ge">_~~*</span>*删除线 倾斜 2 加粗 1**~~_
+
+<span class="gs">__~~*删除线 倾斜 1 加粗 2*~~__</span> 和 *~~__删除线 倾斜 1 加粗 2__~~*
+</code></pre></td></tr></table>
+</div>
+</div><p><code>内联代码块</code></p>
+<p><kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>del</kbd></p>
+<p><strong>加粗 1</strong> 和 <strong>加粗 2</strong></p>
+<p><em>倾斜 1</em>  和 <em>倾斜 2</em></p>
+<p><del>删除线</del></p>
+<p><em><strong>加粗 1 和 倾斜 1</strong></em></p>
+<p><em><strong>加粗 2 和 倾斜 2</strong></em></p>
+<p><strong><em>加粗 2 和 倾斜 1</em></strong></p>
+<p><strong><em>加粗 1 和 倾斜 2</em></strong></p>
+<p><del><em>删除线 倾斜 1</em></del> 和 <em><del>删除线 倾斜 2</del></em></p>
+<p><del><em>删除线 倾斜 2</em></del> 和  <em><del>删除线 倾斜 2</del></em></p>
+<p><del><strong>删除线 加粗 1</strong></del> 和 <strong><del>删除线 加粗 1</del></strong></p>
+<p><del><strong>删除线 加粗 2</strong></del> 和 <strong><del>删除线 加粗 2</del></strong></p>
+<p><del><em><strong>删除线 倾斜 1 加粗 1</strong></em></del> 和 <em><strong><del>删除线 倾斜 1 加粗 1</del></strong></em></p>
+<p><del><em><strong>删除线 倾斜 2 加粗 2</strong></em></del> 和 <em><strong><del>删除线 倾斜 2 加粗 2</del></strong></em></p>
+<p><strong><del><em>删除线 倾斜 1 加粗 1</em></del></strong> 和 <em><del><strong>删除线 倾斜 1 加粗 1</strong></del></em></p>
+<p><strong><del><em>删除线 倾斜 2 加粗 2</em></del></strong> 和 <em><del><strong>删除线 倾斜 2 加粗 2</strong></del></em></p>
+<p><strong><del><em>删除线 倾斜 2 加粗 1</em></del></strong> 和 <em><del><strong>删除线 倾斜 2 加粗 1</strong></del></em></p>
+<p><strong><del><em>删除线 倾斜 1 加粗 2</em></del></strong> 和 <em><del><strong>删除线 倾斜 1 加粗 2</strong></del></em></p>
+<h2 id="6-图片">6. 图片</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-markdown" data-lang="markdown">Web image
+![<span class="nt">Web Picture</span>](<span class="na">https://static.dillonzq.com/images/20190817130904-U6cPUk.jpg &#34;Web Picture&#34;</span>)
+
+Local image
+![<span class="nt">Local Picture</span>](<span class="na">logo-revolunet-carre.jpg &#34;Local Picture&#34;</span>)
+
+contact@revolunet.com
+
+<span class="ni">@revolunet</span>
+
+Issue <span class="ni">#1</span>
+
+https://github.com/revolunet/sublimetext-markdown-preview/
+
+This is a link https://github.com/revolunet/sublimetext-markdown-preview/.
+
+This is a link &#34;https://github.com/revolunet/sublimetext-markdown-preview/&#34;.
+
+With this link (https://github.com/revolunet/sublimetext-markdown-preview/), it still works.
+</code></pre></td></tr></table>
+</div>
+</div><p>Web image
+<figure><a class="lightgallery" href="https://static.dillonzq.com/images/20190817130904-U6cPUk.jpg" title="Web Picture" data-thumbnail="https://static.dillonzq.com/images/20190817130904-U6cPUk.jpg" data-sub-html="<h2>Web Picture</h2><p>Web Picture</p>">
+        
+    </a><figcaption class="image-caption">Web Picture</figcaption>
+    </figure></p>
+<p>Local image
+<figure><a class="lightgallery" href="/%e8%8b%b9%e6%9e%9c-touch-icon.png" title="Local Picture" data-thumbnail="/苹果-touch-icon.png" data-sub-html="<h2>Local Picture</h2><p>Local Picture</p>">
+        
+    </a><figcaption class="image-caption">Local Picture</figcaption>
+    </figure></p>
+<p><a href="https://www.google.com">https://www.google.com</a></p>
+<p><a href="mailto:contact@revolunet.com">contact@revolunet.com</a></p>
+<p>@revolunet</p>
+<p>Issue #1</p>
+<p><a href="https://github.com/revolunet/sublimetext-markdown-preview/">https://github.com/revolunet/sublimetext-markdown-preview/</a></p>
+<p>This is a link <a href="https://github.com/revolunet/sublimetext-markdown-preview/">https://github.com/revolunet/sublimetext-markdown-preview/</a>.</p>
+<p>This is a link &ldquo;<a href="https://github.com/revolunet/sublimetext-markdown-preview/%22">https://github.com/revolunet/sublimetext-markdown-preview/&quot;</a>.</p>
+<p>With this link (<a href="https://github.com/revolunet/sublimetext-markdown-preview/),">https://github.com/revolunet/sublimetext-markdown-preview/),</a> it still works.</p>
+<h2 id="abbreviation">Abbreviation</h2>
+<p>Abbreviations source are found in a separate markdown file specified in frontmatter.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">The HTML specification 
+is maintained by the W3C.
+
+*[HTML]: Hyper Text Markup Language
+*[W3C]:  World Wide Web Consortium
+</code></pre></td></tr></table>
+</div>
+</div><p>The HTML specification
+is maintained by the W3C.</p>
+<h2 id="unorde红色-list">Unorde红色 List</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">Unorde红色 List
+
+- item 1
+    * item A
+    * item B
+        more text
+        + item a
+        + item b
+        + item c
+    * item C
+- item 2
+- item 3
+</code></pre></td></tr></table>
+</div>
+</div><p>Unorde红色 List</p>
+<ul>
+<li>item 1
+<ul>
+<li>item A</li>
+<li>item B
+more text
+<ul>
+<li>item a</li>
+<li>item b</li>
+<li>item c</li>
+</ul>
+</li>
+<li>item C</li>
+</ul>
+</li>
+<li>item 2</li>
+<li>item 3</li>
+</ul>
+<h2 id="orde红色-list">Orde红色 List</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">Orde红色 List
+
+1. item 1
+    1. item A
+    2. item B
+        more text
+        1. item a
+        2. item b
+        3. item c
+    3. item C
+2. item 2
+3. item 3
+</code></pre></td></tr></table>
+</div>
+</div><p>Orde红色 List</p>
+<ol>
+<li>item 1
+<ol>
+<li>item A</li>
+<li>item B
+more text
+<ol>
+<li>item a</li>
+<li>item b</li>
+<li>item c</li>
+</ol>
+</li>
+<li>item C</li>
+</ol>
+</li>
+<li>item 2</li>
+<li>item 3</li>
+</ol>
+<h2 id="mixed-lists">Mixed Lists</h2>
+<p><code>Really Mixed Lists</code> should break with <code>sane_lists</code> on.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">Mixed Lists
+
+- item 1
+    * [X] item A
+    * [ ] item B
+        more text
+        1. item a
+        2. itemb
+        3. item c
+    * [X] item C
+- item 2
+- item 3
+
+
+Really Mixed Lists
+
+- item 1
+    * [X] item A
+    - item B
+        more text
+        1. item a
+        + itemb
+        + [ ] item c
+    3. item C
+2. item 2
+- [X] item 3
+</code></pre></td></tr></table>
+</div>
+</div><p>Mixed Lists</p>
+<ul>
+<li>item 1
+<ul>
+<li><i class="far fa-check-square fa-fw"></i> item A</li>
+<li><i class="far fa-square fa-fw"></i> item B
+more text
+<ol>
+<li>item a</li>
+<li>itemb</li>
+<li>item c</li>
+</ol>
+</li>
+<li><i class="far fa-check-square fa-fw"></i> item C</li>
+</ul>
+</li>
+<li>item 2</li>
+<li>item 3</li>
+</ul>
+<p>Really Mixed Lists</p>
+<ul>
+<li>item 1
+<ul>
+<li><i class="far fa-check-square fa-fw"></i> item A</li>
+</ul>
+<ul>
+<li>item B
+more text
+<ol>
+<li>item a</li>
+</ol>
+<ul>
+<li>itemb</li>
+<li><i class="far fa-square fa-fw"></i> item c</li>
+</ul>
+</li>
+</ul>
+<ol start="3">
+<li>item C</li>
+</ol>
+</li>
+</ul>
+<ol start="2">
+<li>item 2</li>
+</ol>
+<ul>
+<li><i class="far fa-check-square fa-fw"></i> item 3</li>
+</ul>
+<h2 id="blocks">Blocks</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">    This is a block.
+    
+    This is more of a block.
+
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>This is a block.
+
+This is more of a block.
+</code></pre>
+<h2 id="block-quotes">Block Quotes</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">&gt; This is a block quote
+&gt;&gt; How does it look?
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>This is a block quote.</p>
+<blockquote>
+<p>How does it look?
+I think it looks good.</p>
+</blockquote>
+</blockquote>
+<h2 id="fenced-block">Fenced Block</h2>
+<p>Assuming guessing is not enabled.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">```
+// Fenced **without** highlighting
+function doIt() {
+    for (var i = 1; i &lt;= slen ; i^^) {
+        setTimeout(&#34;document.z.textdisplay.value = newMake()&#34;, i*300);
+        setTimeout(&#34;window.status = newMake()&#34;, i*300);
+    }
+}
+```
+
+```javascript
+// Fenced **with** highlighting
+function doIt() {
+    for (var i = 1; i &lt;= slen ; i^^) {
+        setTimeout(&#34;document.z.textdisplay.value = newMake()&#34;, i*300);
+        setTimeout(&#34;window.status = newMake()&#34;, i*300);
+    }
+}
+```
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// Fenced **without** highlighting
+function doIt() {
+    for (var i = 1; i &lt;= slen ; i^^) {
+        setTimeout(&#34;document.z.textdisplay.value = newMake()&#34;, i*300);
+        setTimeout(&#34;window.status = newMake()&#34;, i*300);
+    }
+}
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">// Fenced **with** highlighting
+</span><span class="c1"></span><span class="kd">function</span> <span class="nx">doIt</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">slen</span> <span class="p">;</span> <span class="nx">i</span><span class="o">^^</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">setTimeout</span><span class="p">(</span><span class="s2">&#34;document.z.textdisplay.value = newMake()&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="o">*</span><span class="mi">300</span><span class="p">);</span>
+        <span class="nx">setTimeout</span><span class="p">(</span><span class="s2">&#34;window.status = newMake()&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="o">*</span><span class="mi">300</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="tables">Tables</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">| _颜色_      | 水果          | 蔬菜         |
+| ------------- |:---------------:| -----------------:|
+| 红色           | *苹果*         | [辣椒](#Tables) |
+| ~~橙色~~    | 橘子         | **胡萝卜**        |
+| 绿色         | ~~***梨子***~~ | 菠菜           |
+</code></pre></td></tr></table>
+</div>
+</div><table>
+<thead>
+<tr>
+<th><em>颜色</em></th>
+<th style="text-align:center">水果</th>
+<th style="text-align:right">蔬菜</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>红色</td>
+<td style="text-align:center"><em>苹果</em></td>
+<td style="text-align:right"><a href="#Tables" rel="">辣椒</a></td>
+</tr>
+<tr>
+<td><del>橙色</del></td>
+<td style="text-align:center">橘子</td>
+<td style="text-align:right"><strong>胡萝卜</strong></td>
+</tr>
+<tr>
+<td>绿色</td>
+<td style="text-align:center"><del><em><strong>梨子</strong></em></del></td>
+<td style="text-align:right">菠菜</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Class or Enum</th>
+<th>Year</th>
+<th>Month</th>
+<th style="text-align:center">Day</th>
+<th style="text-align:center">Hours</th>
+<th style="text-align:center">Minutes</th>
+<th>Seconds*</th>
+<th style="text-align:center">Zone Offset</th>
+<th style="text-align:center">Zone ID</th>
+<th>toString Output</th>
+<th>Where Discussed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Instant</code></td>
+<td></td>
+<td></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td><center></center></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td><code>2013-08-20T15:16:26.355Z</code></td>
+<td><a href="https://docs.oracle.com/javase/tutorial/datetime/iso/instant.html" target="_blank" rel="noopener noreffer">Instant Class</a></td>
+</tr>
+<tr>
+<td><code>LocalDate</code></td>
+<td><center></center></td>
+<td><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td><code>2013-08-20</code></td>
+<td><a href="https://docs.oracle.com/javase/tutorial/datetime/iso/date.html" target="_blank" rel="noopener noreffer">Date Classes</a></td>
+</tr>
+<tr>
+<td><code>LocalDateTime</code></td>
+<td><center></center></td>
+<td><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td><center></center></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td><code>2013-08-20T08:16:26.937</code></td>
+<td><a href="https://docs.oracle.com/javase/tutorial/datetime/iso/datetime.html" target="_blank" rel="noopener noreffer">Date and Time Classes</a></td>
+</tr>
+<tr>
+<td><code>ZonedDateTime</code></td>
+<td><center></center></td>
+<td><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td><code>2013-08-21T00:16:26.941+09:00[Asia/Tokyo]</code></td>
+<td><a href="https://docs.oracle.com/javase/tutorial/datetime/iso/timezones.html" target="_blank" rel="noopener noreffer">Time Zone and Offset Classes</a></td>
+</tr>
+<tr>
+<td><code>LocalTime</code></td>
+<td></td>
+<td></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td><center></center></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td><code>08:16:26.943</code></td>
+<td><a href="https://docs.oracle.com/javase/tutorial/datetime/iso/datetime.html" target="_blank" rel="noopener noreffer">Date and Time Classes</a></td>
+</tr>
+<tr>
+<td><code>MonthDay</code></td>
+<td></td>
+<td><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td><code>--08-20</code></td>
+<td><a href="https://docs.oracle.com/javase/tutorial/datetime/iso/date.html" target="_blank" rel="noopener noreffer">Date Classes</a></td>
+</tr>
+<tr>
+<td><code>Year</code></td>
+<td><center></center></td>
+<td></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td><code>2013</code></td>
+<td><a href="https://docs.oracle.com/javase/tutorial/datetime/iso/date.html" target="_blank" rel="noopener noreffer">Date Classes</a></td>
+</tr>
+<tr>
+<td><code>YearMonth</code></td>
+<td><center></center></td>
+<td><center></center></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td><code>2013-08</code></td>
+<td><a href="https://docs.oracle.com/javase/tutorial/datetime/iso/date.html" target="_blank" rel="noopener noreffer">Date Classes</a></td>
+</tr>
+<tr>
+<td><code>Month</code></td>
+<td></td>
+<td><center></center></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td><code>AUGUST</code></td>
+<td><a href="https://docs.oracle.com/javase/tutorial/datetime/iso/enum.html" target="_blank" rel="noopener noreffer">DayOfWeek and Month Enums</a></td>
+</tr>
+<tr>
+<td><code>OffsetDateTime</code></td>
+<td><center></center></td>
+<td><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td style="text-align:center"></td>
+<td><code>2013-08-20T08:16:26.954-07:00</code></td>
+<td><a href="https://docs.oracle.com/javase/tutorial/datetime/iso/timezones.html" target="_blank" rel="noopener noreffer">Time Zone and Offset Classes</a></td>
+</tr>
+<tr>
+<td><code>OffsetTime</code></td>
+<td></td>
+<td></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td style="text-align:center"></td>
+<td><code>08:16:26.957-07:00</code></td>
+<td><a href="https://docs.oracle.com/javase/tutorial/datetime/iso/timezones.html" target="_blank" rel="noopener noreffer">Time Zone and Offset Classes</a></td>
+</tr>
+<tr>
+<td><code>Duration</code></td>
+<td></td>
+<td></td>
+<td style="text-align:center">**</td>
+<td style="text-align:center">**</td>
+<td style="text-align:center">**</td>
+<td><center></center></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td><code>PT20H</code> (20 hours)</td>
+<td><a href="https://docs.oracle.com/javase/tutorial/datetime/iso/period.html" target="_blank" rel="noopener noreffer">Period and Duration</a></td>
+</tr>
+<tr>
+<td><code>Period</code></td>
+<td><center></center></td>
+<td><center></center></td>
+<td style="text-align:center"><center></center></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td></td>
+<td style="text-align:center">***</td>
+<td style="text-align:center">***</td>
+<td><code>P10D</code> (10 days)</td>
+<td><a href="https://docs.oracle.com/javase/tutorial/datetime/iso/period.html" target="_blank" rel="noopener noreffer">Period and Duration</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="smart-strong">Smart Strong</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">Text with double__underscore__words.
+
+__Strong__ still works.
+
+__this__works__too__
+</code></pre></td></tr></table>
+</div>
+</div><p>Text with double__underscore__words.</p>
+<p><strong>Strong</strong> still works.</p>
+<p><strong>this__works__too</strong></p>
+<h2 id="smarty">Smarty</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">&#34;double quotes&#34;
+
+&#39;single quotes&#39;
+
+da--sh
+
+elipsis...
+</code></pre></td></tr></table>
+</div>
+</div><p>&ldquo;double quotes&rdquo;</p>
+<p>&lsquo;single quotes&rsquo;</p>
+<p>da&ndash;sh</p>
+<p>elipsis&hellip;</p>
+<h2 id="neseted-fences">Neseted Fences</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">    ```
+    This will still be parsed
+    as a normal indented code block.
+    ```
+
+```
+This will still be parsed
+as a fenced code block.
+```
+
+- This is a list that contains multiple code blocks.
+
+    - Here is an indented block
+
+            ```
+            This will still be parsed
+            as a normal indented code block.
+            ```
+
+    - Here is a fenced code block:
+
+        ```
+        This will still be parsed
+        as a fenced code block.
+        ```
+
+        &gt; ```
+        &gt; Blockquotes?
+        &gt; Not a problem!
+        &gt; ```
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>```
+This will still be parsed
+as a normal indented code block.
+```
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">This will still be parsed
+as a fenced code block.
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>
+<p>This is a list that contains multiple code blocks.</p>
+<ul>
+<li>
+<p>Here is an indented block</p>
+<pre><code>  ```
+  This will still be parsed
+  as a normal indented code block.
+  ```
+</code></pre>
+</li>
+<li>
+<p>Here is a fenced code block:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">This will still be parsed
+as a fenced code block.
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">Blockquotes?
+Not a problem!
+</code></pre></td></tr></table>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="others">Others</h1>
+<h2 id="section-7">Github Emoji</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">This is a test for emoji 😄.  The emojis are images linked to github assets :octocat:.
+</code></pre></td></tr></table>
+</div>
+</div><p>This is a test for emoji 😄.  The emojis are images linked to github assets :octocat:.</p>
+<h3 id="people">People</h3>
+<p>👍👎👽👼💢😠😧😲👶💙😊💥🙇‍♂️:bowtie:👦👰💔👤👥👏😰💥😖😕👷‍♂️👮‍♂️👫👩‍❤️‍👨👩‍❤️‍💋‍👨😢😿💘💃👯‍♀️💨😞😥💫😵💧👂❗😑👀👊👨‍👩‍👦😨:feelsgood:🐾:finnadie:🔥✊😳😦🖕👧:goberserk::godmode::绿色_heart:❕❔😬😁😀💂‍♂️💇‍♀️✋💩🙉❤️😍😻💓💗:hurtrealbad:😯👿💁‍♀️😇👺👹😂😹💋😗😽😚😘😙😆👄💌👨👲👳‍♂️😷💆‍♀️🤘💪🎵💅:neckbeard:😐🙅‍♀️😶👃🎶👌🙆‍♀️👴👵👐😮😔😣🙍‍♀️👱‍♂️🙎‍♀️👇👈👉☝️👆💩😾🙏👸👊💜❓😡:rage1::rage2::rage3::rage4:✋🙌🙋‍♀️☺️😌💞🏃‍♂️🏃😆😱🙀🙈💩💀😴😪😄😸😃😺😈😏😼😭✨💖🙊💬⭐🌟😛😝😜😎:suspect:😓💦😅💭👎👍:ti红色_face:👅😤:trollface:💕👬👭😒✌️🚶‍♂️👋😩😉👩😟💛😋💤</p>
+<h3 id="nature">Nature</h3>
+<p>🐜🐤🐻🐝🪲🐦🌼🐡🐗💐🐛🌵🐫🐱🐈🌸🌰🐔☁️🐮🐄🌙🐊🌀🌳🐶🐕🐬🐉🐲🐪🌾🌍🌎🌏🐘:ever绿色_tree:🍂🌓🌛🐟🌁🍀🐸🌕🌝🌐🐐🐹🐥🐣🌿🌺🐝🐴🐨🌗🌜🍃🐆🍁🌌🐒🐵🌔🐭🐁🍄🌑🌚🌃🌊:octocat:🐙🐂🌴🐼⛅🐾🐧🐷🐖🐽🐩🐰🐇🐎🐏🐀🐓🌹🌱🐑🐚🐌🐍❄️☃️:squirrel:🌞🌻☀️🐯🐅🐠🌷🐢☂️🌋🌘🌖🐃🌒🌔🐳🐋🐺⚡</p>
+<h3 id="objects">Objects</h3>
+<p>🎱⏰:苹果:🎨👟🍼🎈🎍🍌📊⚾🏀🛀🛁🔋🍺🍻🔔🍱🚴‍♂️👙🎂🃏✒️📘💣📖🔖📑📚👢🎳🍞💼💡🍰📆📲📷🍬📇💿📉📈🍒🍫🎄🎬📋📕🔐🌂♣️🍸☕💻🎊🍪🌽:c红色it_card:👑🔮🍛🍮🍡🎯📅♦️💵🎎🚪🍩👗📀📧🥚🍆🔌✉️✉📩💶👓📠📁🎆🍥🎣🎏🔦🐬💾🎴🏈👣🍴🍤🍟🎲💎👻🎁💝⛳🍇:绿色_苹果::绿色_book:🎸🔫🍔🔨👜🎧♥️🔆👠🔪🍯🏇⌛⏳🍨🍦📥📨📱🎃👖🔑👘🏮📒🍋💄🔒🔏🍭➿🔊📢🔅🔍🔎🀄📫📪📬📭👞🍖📣🍈📝🎤🔬💽💸💰🎓🚵‍♂️🎥🎹🎼🔇📛👔📰🔕📓📔🔩🍢📖📂:橙色_book:📤📦📄📃📟📎🍑🍐✏✏️☎️💊:pine苹果:🍕📯📮👝🍗💷👛📌📻🍜🎀🍚🍙🍘🎑💍🏉🎽🍶👡🎅🛰️🎷🎒✂️📜💺🍧👕👞🚿🎿🚬🏂⚽🔉👾♠️🍝❇️🎇🔈🍲📏🍓🏄‍♂️🍣🍠🏊‍♂️💉🎉🎋🍊🍵☎📞🔭🎾🚽🍅🎩📐🏆🍹🎺👕📺🔓📼📹🎮🎻⌚🍉🎐🍷👚👒🔧💴</p>
+<h3 id="places">Places</h3>
+<p>🚡✈️🚑⚓🚛🏧🏦💈🔰🚲🚙⛵🌉🚅🚄🚌🚏🚗🎠:checke红色_flag:⛪🎪🌇🌆🇨🇳🚧🏪🎌🇩🇪🏬🇪🇸🏰🏤🏭🎡🚒⛲🇫🇷⛽🇬🇧🚁🏥🏨♨️🏠🏡🇮🇹🏮🗾🏯🇯🇵🇰🇷🚈🏩🚐🚝🗻🚠🚞🗿🏢🚘🚍🚔🚖🎭🚓🏣🚃🌈:红色_car:🚀🎢🚨📍🚣‍♂️🇷🇺⛵🏫🚢🎰🚤🌠🚉🗽🚂🌅🌄🚟🚕⛺🎫🗼🚜🚥🚋🚆🚊🚩🚎🚚🇬🇧🇺🇸🚦⚠️💒</p>
+<h3 id="symbols">Symbols</h3>
+<p>💯🔢🅰️🆎🔤🔡🉑♒♈◀️⏬⏫⬇️🔽▶️⤵️⤴️⬅️↙️↘️➡️↪️⬆️↕️🔼↖️↗️🔃🔄🅱️🚼🔙🛄☑️‼️⚫⬛◾◼️▪️🔲♋🔠♑💹🚸🎦🆑🕐🕙🕥🕚🕦🕛🕧🕜🕑🕝🕒🕞🕓🕟🕔🕠🕕🕡🕖🕢🕗🕣🕘🕤㊗️🆒©️➰💱🛃💠🚯8️⃣✴️✳️🔚⏩5️⃣4️⃣🆓♊#️⃣💟✔️➗💲❗➖✖️➕🆔🉐ℹ️⁉️🔟🈁🔵🔷:large_橙色_diamond:🛅↔️↩️♌♎🔗ⓜ️🚹🚇📴:negative_squa红色_cross_mark:🆕🆖9️⃣🚳⛔🚫📵🚷🚭🚱⭕🅾️🆗🔛1️⃣⛎🅿️〽️🛂♓🚰🚮🔘♻️:红色_circle::registe红色:🔁🔂🚻⏪🈂️♐♏㊙️7️⃣:shipit:📶6️⃣🔯🔹:small_橙色_diamond::small_红色_triangle::small_红色_triangle_down:🔜🆘🔣♉3️⃣™️🔝🔱🔀2️⃣🈹🈴🈺🈯🈷️🈶🈵🈚🈸🈲🈳🔞🆙📳♍🆚〰️🚾♿✅⚪💮⬜◽◻️▫️🔳🚺❌0️⃣</p>
+<h2 id="insert">Insert</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">^^insert^^
+
+^^*insert 倾斜*^^  *^^insert 倾斜 2^^*
+
+^^_insert 倾斜_^^  _^^insert 倾斜 2^^_
+
+^^**insert 加粗**^^  **^^insert 加粗 2^^**
+
+^^__insert 加粗__^^  __^^insert 加粗 2^^__
+
+^^***insert 倾斜 加粗***^^  ***^^insert 倾斜 加粗 2^^***
+
+^^___insert 倾斜 加粗___^^  ___^^insert 倾斜 加粗 2^^___
+
+**^^*insert 倾斜 加粗*^^**  *^^**insert 倾斜 加粗 2**^^*
+
+__^^_insert 倾斜 加粗_^^__  _^^__insert 倾斜 加粗 2__^^_
+
+**^^_insert 倾斜 加粗_^^**  _^^**insert 倾斜 加粗 2**^^_
+
+__^^*insert 倾斜 加粗*^^__  *^^__insert 倾斜 加粗 2__^^*
+</code></pre></td></tr></table>
+</div>
+</div><p>^^insert^^</p>
+<p>^^<em>insert 倾斜</em>^^  <em>^^insert 倾斜 2^^</em></p>
+<p>^^<em>insert 倾斜</em>^^  <em>^^insert 倾斜 2^^</em></p>
+<p>^^<strong>insert 加粗</strong>^^  <strong>^^insert 加粗 2^^</strong></p>
+<p>^^<strong>insert 加粗</strong>^^  <strong>^^insert 加粗 2^^</strong></p>
+<p>^^<em><strong>insert 倾斜 加粗</strong></em>^^  <em><strong>^^insert 倾斜 加粗 2^^</strong></em></p>
+<p>^^<em><strong>insert 倾斜 加粗</strong></em>^^  <em><strong>^^insert 倾斜 加粗 2^^</strong></em></p>
+<p><strong>^^<em>insert 倾斜 加粗</em>^^</strong>  <em>^^<strong>insert 倾斜 加粗 2</strong>^^</em></p>
+<p><strong>^^<em>insert 倾斜 加粗</em>^^</strong>  <em>^^<strong>insert 倾斜 加粗 2</strong>^^</em></p>
+<p><strong>^^<em>insert 倾斜 加粗</em>^^</strong>  <em>^^<strong>insert 倾斜 加粗 2</strong>^^</em></p>
+<p><strong>^^<em>insert 倾斜 加粗</em>^^</strong>  <em>^^<strong>insert 倾斜 加粗 2</strong>^^</em></p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>这是一个基本的数字脚注 <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>带有 &ldquo;label&rdquo; 标签的脚注 <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>下定义的脚注 <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer">LoveIt 主题</a> <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>]]></description>
 </item><item>
     <title>类型与反射</title>
     <link>https://ryan-y-c.github.io/%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%8F%8D%E5%B0%84/</link>
     <pubDate>Sun, 20 Aug 2017 21:28:52 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://ryan-y-c.github.io/%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%8F%8D%E5%B0%84/</guid>
-    <description><![CDATA[类型与反射]]></description>
+    <description><![CDATA[<h1 id="类型与反射">类型与反射</h1>
+<h2 id="java的类与class">java的类与Class</h2>
+<p>RTTI(Run-Time TypeIdentification) 运行时类型识别</p>
+<p>一个Class对象就是一个类的说明书</p>
+<ul>
+<li>JVM根据这个说明书创建这个类的实例</li>
+<li>静态变量的本质</li>
+</ul>
+<p>object类的getClass方法可以提供该对象的具体的类</p>
+<p>复习(本质时调用getClass后知道自己的类型)</p>
+<ul>
+<li>instanceof</li>
+<li>强制类型转换</li>
+</ul>
+<h2 id="class对象的生命周期">Class对象的生命周期</h2>
+<p>在第一次使用时被加载</p>
+<pre><code>  ||     链接         ||
+</code></pre>
+<p>加载-&gt;||验证-&gt;准备-&gt;解析-&gt;||初始化     =&gt;类加载过程</p>
+<p>查看类加载过程命令 verbose:class</p>
+<p>过滤命令grep</p>
+<h2 id="class与classloader">Class与ClassLoader</h2>
+<p>Classloader负责从外部系统中加载一个类</p>
+<ul>
+<li>这个类对应的Java文件并不需要存在</li>
+<li>这个类（字节码）并不一定需要存在
+<ul>
+<li>文件的本质是字节流，所以可以网络加载字节码</li>
+</ul>
+</li>
+</ul>
+<p>Classloader的双亲委派加载模型</p>
+<p>java语言规范与java虚拟机规范</p>
+<ul>
+<li>Java Language Specification JLS</li>
+<li>Java virtual Machine Specification</li>
+<li>这种分离提供了在JVM上运行其他语言的可能</li>
+</ul>
+<h2 id="反射与spring反射">反射与Spring反射</h2>
+<p>反射</p>
+<ul>
+<li>动态创建对象</li>
+<li>动态调用方法</li>
+<li>动态获得属性</li>
+</ul>]]></description>
 </item></channel>
 </rss>
