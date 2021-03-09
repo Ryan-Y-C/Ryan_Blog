@@ -1,3 +1,4 @@
+#baseURL = "https://ryan-y-c.github.io"
 baseURL = "https://ryan-y-c.github.io"
 # [en, zh-cn, fr, ...] 设置默认的语言
 defaultContentLanguage = "zh-cn"
@@ -21,7 +22,7 @@ theme = "LoveIt"
   #  LoveIt 主题版本
   version = "0.2.X"
   # 网站描述
-  description = "这是我的全新 Hugo 网站"
+  description = "Ryan Blog"
   # 网站关键词
   keywords = ["Blog"]
   # 网站默认主题样式 ("light", "dark", "auto")
@@ -143,7 +144,7 @@ theme = "LoveIt"
       #  主页显示的网站标题 (支持 HTML 格式)
       title = ""
       # 主页显示的网站副标题
-      subtitle = "凡是过往,皆为序章 凡是未来,皆有可期！"
+      subtitle = "凡是过往，皆为序章！"
       # 是否为副标题显示打字机动画
       typeit = true
       # 是否显示社交账号
