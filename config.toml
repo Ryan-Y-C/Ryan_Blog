@@ -18,6 +18,42 @@ keywords = ["Blog"]
 
 # 更改使用 Hugo 构建网站时使用的默认主题
 theme = "LoveIt"
+
+[menu]
+  [[menu.main]]
+    identifier = "posts"
+    # 你可以在名称 (允许 HTML 格式) 之前添加其他信息, 例如图标
+    pre = ""
+    # 你可以在名称 (允许 HTML 格式) 之后添加其他信息, 例如图标
+    post = ""
+    name = "文章"
+    url = "/posts/"
+    # 当你将鼠标悬停在此菜单链接上时, 将显示的标题
+    title = ""
+    weight = 1
+  [[menu.main]]
+    identifier = "tags"
+    pre = ""
+    post = ""
+    name = "标签"
+    url = "/tags/"
+    title = ""
+    weight = 2
+  [[menu.main]]
+    identifier = "categories"
+    pre = ""
+    post = ""
+    name = "分类"
+    url = "/categories/"
+    title = ""
+    weight = 3
+  [[menu.main]]
+    identifier = "documentation"
+    pre = ""
+    name = "文档"
+    url = "/categories/documentation/"
+    title = ""
+    weight = 4
 [params]
   #  LoveIt 主题版本
   version = "0.2.X"
@@ -35,7 +71,7 @@ theme = "LoveIt"
   #  日期格式
   dateFormat = "2006-01-02"
   # 网站图片, 用于 Open Graph 和 Twitter Cards
-#  images = ["/logo.png"]
+  images = ["/logo.png"]
 
   #  应用图标配置
   [params.app]
@@ -91,11 +127,11 @@ theme = "LoveIt"
       # 你可以在名称 (允许 HTML 格式) 之后添加其他信息, 例如图标
       post = ""
       #  是否为标题显示打字机动画
-      typeit = false
+      typeit = true
 
   # 页面底部信息配置
   [params.footer]
-    enable = true
+    enable = false
     #  自定义内容 (支持 HTML 格式)
     custom = ''
     #  是否显示 Hugo 和主题信息
@@ -246,7 +282,7 @@ theme = "LoveIt"
     # 是否在文章页面显示原始 Markdown 文档链接
     linkToMarkdown = true
     #  是否在 RSS 中显示全文内容
-    rssFullText = false
+    rssFullText = true
     #  目录配置
     [params.page.toc]
       # 是否使用目录
@@ -291,38 +327,38 @@ theme = "LoveIt"
       # 是否添加 FullscreenControl
       fullscreen = true
     #  文章页面的分享信息设置
-#    [params.page.share]
-#      enable = true
-#      Twitter = true
-#      Facebook = true
-#      Linkedin = false
-#      Whatsapp = true
-#      Pinterest = false
-#      Tumblr = false
-#      HackerNews = false
-#      Reddit = false
-#      VK = false
-#      Buffer = false
-#      Xing = false
-#      Line = true
-#      Instapaper = false
-#      Pocket = false
-#      Digg = false
-#      Stumbleupon = false
-#      Flipboard = false
-#      Weibo = true
-#      Renren = false
-#      Myspace = true
-#      Blogger = true
-#      Baidu = false
-#      Odnoklassniki = false
-#      Evernote = true
-#      Skype = false
-#      Trello = false
-#      Mix = false
+    [params.page.share]
+      enable = false
+      Twitter = true
+      Facebook = true
+      Linkedin = false
+      Whatsapp = true
+      Pinterest = false
+      Tumblr = false
+      HackerNews = false
+      Reddit = false
+      VK = false
+      Buffer = false
+      Xing = false
+      Line = true
+      Instapaper = false
+      Pocket = false
+      Digg = false
+      Stumbleupon = false
+      Flipboard = false
+      Weibo = true
+      Renren = false
+      Myspace = true
+      Blogger = true
+      Baidu = false
+      Odnoklassniki = false
+      Evernote = true
+      Skype = false
+      Trello = false
+      Mix = false
     #  评论系统设置
     [params.page.comment]
-      enable = true
+      enable = false
       # Disqus 评论系统设置
       [params.page.comment.disqus]
         #
@@ -390,15 +426,15 @@ theme = "LoveIt"
     #  第三方库配置
     [params.page.library]
       [params.page.library.css]
-        # someCSS = "some.css"
+#         someCSS = "some.css"
         # 位于 "assets/"
         # 或者
-        # someCSS = "https://cdn.example.com/some.css"
+         someCSS = "https://cdn.example.com/some.css"
       [params.page.library.js]
-        # someJavascript = "some.js"
+#         someJavascript = "some.js"
         # 位于 "assets/"
         # 或者
-        # someJavascript = "https://cdn.example.com/some.js"
+         someJavascript = "https://cdn.example.com/some.js"
     #  页面 SEO 配置
     [params.page.seo]
       # 图片 URL
@@ -450,7 +486,7 @@ theme = "LoveIt"
 
   #  Cookie 许可配置
   [params.cookieconsent]
-    enable = true
+    enable = false
     # 用于 Cookie 许可横幅的文本字符串
     [params.cookieconsent.content]
       message = ""
